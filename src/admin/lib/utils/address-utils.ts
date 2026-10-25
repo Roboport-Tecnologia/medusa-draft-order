@@ -23,8 +23,14 @@ export function isSameAddress(
   )
 }
 
+/** Translates a country name (`useCountryName`); by default, the English name. */
+type GetCountryName = (iso2: string, fallback: string) => string
+
+const englishCountryName: GetCountryName = (_iso2, fallback) => fallback
+
 export function getFormattedAddress(
-  address?: HttpTypes.AdminOrderAddress | HttpTypes.AdminCustomerAddress | null
+  address?: HttpTypes.AdminOrderAddress | HttpTypes.AdminCustomerAddress | null,
+  getCountryName: GetCountryName = englishCountryName
 ) {
   if (!address) {
     return []
@@ -73,12 +79,16 @@ export function getFormattedAddress(
   }
 
   if (country) {
-    formattedAddress.push(country.display_name!)
+    formattedAddress.push(
+      country.iso_2
+        ? getCountryName(country.iso_2, country.display_name!)
+        : country.display_name!
+    )
   } else if (country_code) {
     const country = getCountryByIso2(country_code)
 
     if (country) {
-      formattedAddress.push(country.display_name)
+      formattedAddress.push(getCountryName(country.iso_2, country.display_name))
     } else {
       formattedAddress.push(country_code.toUpperCase())
     }

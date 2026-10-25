@@ -16,8 +16,10 @@ import {
   useDataTable,
 } from "@medusajs/ui"
 import React, { ReactNode, useCallback, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 
+import { usePlural } from "../../hooks/common/use-plural"
 import { useQueryParams } from "../../hooks/common/use-query-params"
 import { ActionMenu } from "./action-menu"
 
@@ -103,6 +105,8 @@ export const DataTable = <TData,>({
   isLoading = false,
   layout = "auto",
 }: DataTableProps<TData>) => {
+  const { t } = useTranslation()
+  const tp = usePlural()
   const enableFiltering = filters && filters.length > 0
   const enableCommands = commands && commands.length > 0
   const enableSorting = columns.some((column) => column.enableSorting)
@@ -269,7 +273,10 @@ export const DataTable = <TData,>({
         "h-full [&_tr]:last-of-type:!border-b": layout === "fill",
       })}
     >
-      <Primitive.Toolbar className="flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
+      <Primitive.Toolbar
+        className="flex flex-col items-start justify-between gap-2 md:flex-row md:items-center"
+        translations={{ clearAll: t("draftOrdersPlugin.table.clearAll") }}
+      >
         <div className="flex w-full items-center justify-between gap-2">
           {shouldRenderHeading && (
             <div>
@@ -282,8 +289,10 @@ export const DataTable = <TData,>({
             </div>
           )}
           <div className="flex items-center justify-end gap-x-2 md:hidden">
-            {enableFiltering && <Primitive.FilterMenu tooltip="Filter" />}
-            <Primitive.SortingMenu tooltip="Sort" />
+            {enableFiltering && (
+              <Primitive.FilterMenu tooltip={t("draftOrdersPlugin.table.filter")} />
+            )}
+            <Primitive.SortingMenu tooltip={t("draftOrdersPlugin.table.sort")} />
             {actionMenu && <ActionMenu variant="primary" {...actionMenu} />}
             {action && <DataTableAction {...action} />}
           </div>
@@ -293,23 +302,37 @@ export const DataTable = <TData,>({
             <div className="w-full md:w-auto">
               <Primitive.Search
                 data-modal-id="modal-search-input"
-                placeholder="Search"
+                placeholder={t("draftOrdersPlugin.table.search")}
                 autoFocus={autoFocusSearch}
               />
             </div>
           )}
           <div className="hidden items-center gap-x-2 md:flex">
-            {enableFiltering && <Primitive.FilterMenu tooltip="Filter" />}
-            <Primitive.SortingMenu tooltip="Sort" />
+            {enableFiltering && (
+              <Primitive.FilterMenu tooltip={t("draftOrdersPlugin.table.filter")} />
+            )}
+            <Primitive.SortingMenu tooltip={t("draftOrdersPlugin.table.sort")} />
             {actionMenu && <ActionMenu variant="primary" {...actionMenu} />}
             {action && <DataTableAction {...action} />}
           </div>
         </div>
       </Primitive.Toolbar>
       <Primitive.Table emptyState={emptyState} />
-      {enablePagination && <Primitive.Pagination />}
+      {enablePagination && (
+        <Primitive.Pagination
+          translations={{
+            of: t("draftOrdersPlugin.table.pagination.of"),
+            results: t("draftOrdersPlugin.table.pagination.results"),
+            pages: t("draftOrdersPlugin.table.pagination.pages"),
+            prev: t("draftOrdersPlugin.table.pagination.prev"),
+            next: t("draftOrdersPlugin.table.pagination.next"),
+          }}
+        />
+      )}
       {enableCommands && (
-        <Primitive.CommandBar selectedLabel={(count) => `${count} selected`} />
+        <Primitive.CommandBar
+          selectedLabel={(count) => tp("draftOrdersPlugin.table.selected", count)}
+        />
       )}
     </Primitive>
   )

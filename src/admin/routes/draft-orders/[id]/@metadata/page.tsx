@@ -18,6 +18,7 @@ import { ComponentPropsWithoutRef, forwardRef } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
 
+import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
 import { ConditionalTooltip } from "../../../../components/common/conditional-tooltip"
 import { Form } from "../../../../components/common/form"
@@ -26,6 +27,7 @@ import { KeyboundForm } from "../../../../components/common/keybound-form"
 import { RouteDrawer, useRouteModal } from "../../../../components/modals"
 import { useUpdateDraftOrder } from "../../../../hooks/api/draft-orders"
 import { useOrder } from "../../../../hooks/api/orders"
+import { useZodErrorMap } from "../../../../hooks/common/use-zod-error-map"
 
 const MetadataFieldSchema = z.object({
   key: z.string(),
@@ -38,6 +40,7 @@ const MetadataSchema = z.object({
 })
 
 const Metadata = () => {
+  const { t } = useTranslation()
   const { id } = useParams()
 
   const { order, isPending, isError, error } = useOrder(id!, {
@@ -54,10 +57,12 @@ const Metadata = () => {
     <RouteDrawer>
       <RouteDrawer.Header>
         <RouteDrawer.Title asChild>
-          <Heading>Metadata</Heading>
+          <Heading>{t("draftOrdersPlugin.metadata.title")}</Heading>
         </RouteDrawer.Title>
         <RouteDrawer.Description asChild>
-          <span className="sr-only">Add metadata to the draft order.</span>
+          <span className="sr-only">
+            {t("draftOrdersPlugin.metadata.description")}
+          </span>
         </RouteDrawer.Description>
       </RouteDrawer.Header>
       {!isReady ? (
@@ -78,6 +83,8 @@ interface MetadataFormProps {
 }
 
 const MetadataForm = ({ orderId, metadata }: MetadataFormProps) => {
+  const { t } = useTranslation()
+  const zodErrorMap = useZodErrorMap()
   const { handleSuccess } = useRouteModal()
 
   const hasUneditableRows = getHasUneditableRows(metadata)
@@ -88,7 +95,7 @@ const MetadataForm = ({ orderId, metadata }: MetadataFormProps) => {
     defaultValues: {
       metadata: getDefaultValues(metadata),
     },
-    resolver: zodResolver(MetadataSchema),
+    resolver: zodResolver(MetadataSchema, { error: zodErrorMap }),
   })
 
   const handleSubmit = form.handleSubmit(async (data) => {
@@ -100,7 +107,7 @@ const MetadataForm = ({ orderId, metadata }: MetadataFormProps) => {
       },
       {
         onSuccess: () => {
-          toast.success("Metadata updated")
+          toast.success(t("draftOrdersPlugin.metadata.success"))
           handleSuccess()
         },
         onError: (error) => {
@@ -146,10 +153,14 @@ const MetadataForm = ({ orderId, metadata }: MetadataFormProps) => {
           <div className="bg-ui-bg-base shadow-elevation-card-rest grid grid-cols-1 divide-y rounded-lg">
             <div className="bg-ui-bg-subtle grid grid-cols-2 divide-x rounded-t-lg">
               <div className="txt-compact-small-plus text-ui-fg-subtle px-2 py-1.5">
-                <label id={METADATA_KEY_LABEL_ID}>Key</label>
+                <label id={METADATA_KEY_LABEL_ID}>
+                  {t("draftOrdersPlugin.metadata.key")}
+                </label>
               </div>
               <div className="txt-compact-small-plus text-ui-fg-subtle px-2 py-1.5">
-                <label id={METADATA_VALUE_LABEL_ID}>Value</label>
+                <label id={METADATA_VALUE_LABEL_ID}>
+                  {t("draftOrdersPlugin.metadata.value")}
+                </label>
               </div>
             </div>
             {fields.map((field, index) => {
@@ -167,7 +178,7 @@ const MetadataForm = ({ orderId, metadata }: MetadataFormProps) => {
               return (
                 <ConditionalTooltip
                   showTooltip={isDisabled}
-                  content="This row is disabled because it contains non-primitive data."
+                  content={t("draftOrdersPlugin.metadata.disabledRow")}
                   key={field.id}
                 >
                   <div className="group/table relative">
@@ -188,7 +199,7 @@ const MetadataForm = ({ orderId, metadata }: MetadataFormProps) => {
                                   aria-labelledby={METADATA_KEY_LABEL_ID}
                                   {...field}
                                   disabled={isDisabled}
-                                  placeholder="Key"
+                                  placeholder={t("draftOrdersPlugin.metadata.key")}
                                 />
                               </Form.Control>
                             </Form.Item>
@@ -207,7 +218,7 @@ const MetadataForm = ({ orderId, metadata }: MetadataFormProps) => {
                                   {...field}
                                   value={isDisabled ? placeholder : value}
                                   disabled={isDisabled}
-                                  placeholder="Value"
+                                  placeholder={t("draftOrdersPlugin.metadata.value")}
                                 />
                               </Form.Control>
                             </Form.Item>
@@ -236,14 +247,14 @@ const MetadataForm = ({ orderId, metadata }: MetadataFormProps) => {
                           onClick={() => insertRow(index, "above")}
                         >
                           <ArrowUpMini className="text-ui-fg-subtle" />
-                          Insert row above
+                          {t("draftOrdersPlugin.metadata.insertRowAbove")}
                         </DropdownMenu.Item>
                         <DropdownMenu.Item
                           className="gap-x-2"
                           onClick={() => insertRow(index, "below")}
                         >
                           <ArrowDownMini className="text-ui-fg-subtle" />
-                          Insert row below
+                          {t("draftOrdersPlugin.metadata.insertRowBelow")}
                         </DropdownMenu.Item>
                         <DropdownMenu.Separator />
                         <DropdownMenu.Item
@@ -251,7 +262,7 @@ const MetadataForm = ({ orderId, metadata }: MetadataFormProps) => {
                           onClick={() => deleteRow(index)}
                         >
                           <Trash className="text-ui-fg-subtle" />
-                          Delete row
+                          {t("draftOrdersPlugin.metadata.deleteRow")}
                         </DropdownMenu.Item>
                       </DropdownMenu.Content>
                     </DropdownMenu>
@@ -261,10 +272,11 @@ const MetadataForm = ({ orderId, metadata }: MetadataFormProps) => {
             })}
           </div>
           {hasUneditableRows && (
-            <InlineTip variant="warning" label={"Some rows are disabled"}>
-              This object contains non-primitive metadata, such as arrays or
-              objects, that can't be edited here. To edit the disabled rows, use
-              the API directly.
+            <InlineTip
+              variant="warning"
+              label={t("draftOrdersPlugin.metadata.disabledRowsLabel")}
+            >
+              {t("draftOrdersPlugin.metadata.disabledRowsDescription")}
             </InlineTip>
           )}
         </RouteDrawer.Body>
@@ -272,11 +284,11 @@ const MetadataForm = ({ orderId, metadata }: MetadataFormProps) => {
           <div className="flex items-center justify-end gap-x-2">
             <RouteDrawer.Close asChild>
               <Button size="small" variant="secondary" type="button">
-                Cancel
+                {t("draftOrdersPlugin.general.cancel")}
               </Button>
             </RouteDrawer.Close>
             <Button size="small" type="submit" isLoading={isPending}>
-              Save
+              {t("draftOrdersPlugin.general.save")}
             </Button>
           </div>
         </RouteDrawer.Footer>

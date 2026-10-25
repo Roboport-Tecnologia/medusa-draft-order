@@ -1,11 +1,13 @@
 import { ArrowPath, CurrencyDollar, Envelope, FlyingBox } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import { Avatar, Container, Copy, Heading, Text } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 import {
   getFormattedAddress,
   isSameAddress,
 } from "../../lib/utils/address-utils"
+import { useCountryName } from "../../hooks/common/use-country-name"
 import { getOrderCustomer } from "../../lib/utils/order-utils"
 import { ActionMenu } from "../common/action-menu"
 
@@ -25,15 +27,17 @@ export const CustomerSection = ({ order }: CustomerSectionProps) => {
 }
 
 const Header = () => {
+  const { t } = useTranslation()
+
   return (
     <div className="flex items-center justify-between px-6 py-4 gap-2">
-      <Heading level="h2">Customer</Heading>
+      <Heading level="h2">{t("draftOrdersPlugin.customer.title")}</Heading>
       <ActionMenu
         groups={[
           {
             actions: [
               {
-                label: "Transfer ownership",
+                label: t("draftOrdersPlugin.customer.transferOwnership"),
                 to: "transfer-ownership",
                 icon: <ArrowPath />,
               },
@@ -42,12 +46,12 @@ const Header = () => {
           {
             actions: [
               {
-                label: "Edit shipping address",
+                label: t("draftOrdersPlugin.customer.editShippingAddress"),
                 to: "shipping-address",
                 icon: <FlyingBox />,
               },
               {
-                label: "Edit billing address",
+                label: t("draftOrdersPlugin.customer.editBillingAddress"),
                 to: "billing-address",
                 icon: <CurrencyDollar />,
               },
@@ -56,7 +60,7 @@ const Header = () => {
           {
             actions: [
               {
-                label: "Edit email",
+                label: t("draftOrdersPlugin.customer.editEmail"),
                 to: `email`,
                 icon: <Envelope />,
               },
@@ -69,6 +73,7 @@ const Header = () => {
 }
 
 const ID = ({ order }: CustomerSectionProps) => {
+  const { t } = useTranslation()
   const id = order.customer_id
   const name = getOrderCustomer(order)
   const email = order.email
@@ -77,7 +82,7 @@ const ID = ({ order }: CustomerSectionProps) => {
   return (
     <div className="text-ui-fg-subtle grid grid-cols-2 items-center px-6 py-4">
       <Text size="small" leading="compact" weight="plus">
-        ID
+        {t("draftOrdersPlugin.customer.id")}
       </Text>
       <Link
         to={`/customers/${id}`}
@@ -101,13 +106,14 @@ const ID = ({ order }: CustomerSectionProps) => {
 }
 
 const Contact = ({ order }: CustomerSectionProps) => {
+  const { t } = useTranslation()
   const phone = order.shipping_address?.phone || order.billing_address?.phone
   const email = order.email || ""
 
   return (
     <div className="text-ui-fg-subtle grid grid-cols-2 items-start px-6 py-4">
       <Text size="small" leading="compact" weight="plus">
-        Contact
+        {t("draftOrdersPlugin.customer.contact")}
       </Text>
       <div className="flex flex-col gap-y-2">
         <div className="grid grid-cols-[1fr_20px] items-start gap-x-2">
@@ -152,15 +158,21 @@ const AddressPrint = ({
     | HttpTypes.AdminOrder["billing_address"]
   type: "shipping" | "billing"
 }) => {
+  const { t } = useTranslation()
+  const getCountryName = useCountryName()
+  const lines = getFormattedAddress(address, getCountryName)
+
   return (
     <div className="text-ui-fg-subtle grid grid-cols-2 items-start px-6 py-4">
       <Text size="small" leading="compact" weight="plus">
-        {type === "shipping" ? "Shipping address" : "Billing address"}
+        {type === "shipping"
+          ? t("draftOrdersPlugin.customer.shippingAddress")
+          : t("draftOrdersPlugin.customer.billingAddress")}
       </Text>
       {address ? (
         <div className="grid grid-cols-[1fr_20px] items-start gap-x-2">
           <Text size="small" leading="compact">
-            {getFormattedAddress(address).map((line, i) => {
+            {lines.map((line, i) => {
               return (
                 <span key={i} className="break-words">
                   {line}
@@ -171,7 +183,7 @@ const AddressPrint = ({
           </Text>
           <div className="flex justify-end">
             <Copy
-              content={getFormattedAddress(address).join("\n")}
+              content={lines.join("\n")}
               className="text-ui-fg-muted"
             />
           </div>
@@ -186,6 +198,7 @@ const AddressPrint = ({
 }
 
 const Addresses = ({ order }: CustomerSectionProps) => {
+  const { t } = useTranslation()
   return (
     <div className="divide-y">
       <AddressPrint address={order.shipping_address} type="shipping" />
@@ -199,10 +212,10 @@ const Addresses = ({ order }: CustomerSectionProps) => {
             weight="plus"
             className="text-ui-fg-subtle"
           >
-            Billing address
+            {t("draftOrdersPlugin.customer.billingAddress")}
           </Text>
           <Text size="small" leading="compact" className="text-ui-fg-muted">
-            Same as shipping address
+            {t("draftOrdersPlugin.customer.sameAsShipping")}
           </Text>
         </div>
       )}

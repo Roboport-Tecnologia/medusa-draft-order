@@ -15,6 +15,8 @@ import {
 } from "@medusajs/ui"
 import Primitive from "@uiw/react-json-view"
 import { CSSProperties, MouseEvent, Suspense, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { usePlural } from "../../hooks/common/use-plural"
 
 type JsonViewSectionProps = {
   data: object
@@ -22,6 +24,8 @@ type JsonViewSectionProps = {
 }
 
 export const JsonViewSection = ({ data }: JsonViewSectionProps) => {
+  const { t } = useTranslation()
+  const tp = usePlural()
   const numberOfKeys = Object.keys(data).length
 
   return (
@@ -29,7 +33,7 @@ export const JsonViewSection = ({ data }: JsonViewSectionProps) => {
       <div className="flex items-center gap-x-4">
         <Heading level="h2">JSON</Heading>
         <Badge size="2xsmall" rounded="full">
-          {`${numberOfKeys} ${numberOfKeys === 1 ? "key" : "keys"}`}
+          {tp("draftOrdersPlugin.json.keys", numberOfKeys)}
         </Badge>
       </div>
       <Drawer>
@@ -54,7 +58,7 @@ export const JsonViewSection = ({ data }: JsonViewSectionProps) => {
                 </Heading>
               </Drawer.Title>
               <Drawer.Description className="sr-only">
-                View the JSON representation of the draft order.
+                {t("draftOrdersPlugin.json.description")}
               </Drawer.Description>
             </div>
             <div className="flex items-center gap-x-2">
@@ -121,11 +125,10 @@ export const JsonViewSection = ({ data }: JsonViewSectionProps) => {
                     render={(_props, { value }) => {
                       return (
                         <span className="text-ui-contrast-fg-secondary ml-2">
-                          {`${Object.keys(value as object).length} ${
-                            Object.keys(value as object).length === 1
-                              ? "key"
-                              : "keys"
-                          }`}
+                          {tp(
+                            "draftOrdersPlugin.json.keys",
+                            Object.keys(value as object).length
+                          )}
                         </span>
                       )
                     }}

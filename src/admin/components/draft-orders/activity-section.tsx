@@ -10,9 +10,12 @@ import {
 } from "@medusajs/ui"
 import { Collapsible } from "radix-ui"
 import { ReactNode, useMemo, useState } from "react"
+import type { TFunction } from "i18next"
+import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 import { useUser } from "../../hooks/api/users"
-import { getFullDate, getRelativeDate } from "../../lib/utils/date-utils"
+import { useDate } from "../../hooks/common/use-date"
+import { PluralT, usePlural } from "../../hooks/common/use-plural"
 
 interface ActivitySectionProps {
   order: HttpTypes.AdminOrder
@@ -20,15 +23,17 @@ interface ActivitySectionProps {
 }
 
 export const ActivitySection = ({ order, changes }: ActivitySectionProps) => {
+  const { t } = useTranslation()
+  const tp = usePlural()
   const activityItems = useMemo(
-    () => getActivityItems(order, changes),
-    [order, changes]
+    () => getActivityItems(order, changes, t, tp),
+    [order, changes, t, tp]
   )
 
   return (
     <Container className="overflow-hidden p-0">
       <div className="px-6 py-4">
-        <Heading>Activity</Heading>
+        <Heading>{t("draftOrdersPlugin.activity.title")}</Heading>
       </div>
       <ActivityItemList items={activityItems} />
     </Container>
@@ -76,6 +81,7 @@ interface CollapsibleActivityItemListProps {
 const CollapsibleActivityItemList = ({
   items,
 }: CollapsibleActivityItemListProps) => {
+  const tp = usePlural()
   const [open, setOpen] = useState(false)
 
   return (
@@ -87,9 +93,7 @@ const CollapsibleActivityItemList = ({
           </div>
           <Collapsible.Trigger className="text-ui-fg-muted hover:text-ui-fg-base focus:text-ui-fg-base m-0 p-0 pb-4 text-left outline-none transition-colors">
             <Text size="small" leading="compact" weight="plus">
-              {`Show ${items.length} more ${
-                items.length === 1 ? "activity" : "activities"
-              }`}
+              {tp("draftOrdersPlugin.activity.showMore", items.length)}
             </Text>
           </Collapsible.Trigger>
         </div>
@@ -118,6 +122,8 @@ interface ActivityItemProps {
 }
 
 const ActivityItem = ({ item, isFirst = false }: ActivityItemProps) => {
+  const { t } = useTranslation()
+  const { getFullDate, getRelativeDate } = useDate()
   const { user, isPending, isError, error } = useUser(item.userId!, undefined, {
     enabled: !!item.userId,
   })
@@ -163,7 +169,7 @@ const ActivityItem = ({ item, isFirst = false }: ActivityItemProps) => {
             {isUserLoaded ? (
               <Link to={`/settings/users/${user.id}`} className="w-fit">
                 <div className="flex w-fit items-center gap-x-1.5">
-                  <Text size="small">By</Text>
+                  <Text size="small">{t("draftOrdersPlugin.activity.by")}</Text>
                   <Avatar
                     size="2xsmall"
                     fallback={[user.first_name, user.last_name]
@@ -178,7 +184,7 @@ const ActivityItem = ({ item, isFirst = false }: ActivityItemProps) => {
               </Link>
             ) : (
               <div className="flex items-center gap-x-1.5">
-                <Text size="small">By</Text>
+                <Text size="small">{t("draftOrdersPlugin.activity.by")}</Text>
                 <Skeleton className="h-5 w-5 rounded-full" />
                 <Skeleton className="h-4 w-[75px]" />
               </div>
@@ -202,8 +208,31 @@ function renderContent(content: ReactNode) {
   return content
 }
 
+const ACTIVITY_KEYS = {
+  items: {
+    count: "draftOrdersPlugin.activity.counts.items",
+    added: "draftOrdersPlugin.activity.labels.itemsAdded",
+    removed: "draftOrdersPlugin.activity.labels.itemsRemoved",
+    updated: "draftOrdersPlugin.activity.labels.itemsUpdated",
+  },
+  shipping: {
+    count: "draftOrdersPlugin.activity.counts.shippingMethods",
+    added: "draftOrdersPlugin.activity.labels.shippingMethodsAdded",
+    removed: "draftOrdersPlugin.activity.labels.shippingMethodsRemoved",
+    updated: "draftOrdersPlugin.activity.labels.shippingMethodsUpdated",
+  },
+  promotions: {
+    count: "draftOrdersPlugin.activity.counts.promotions",
+    added: "draftOrdersPlugin.activity.labels.promotionsAdded",
+    removed: "draftOrdersPlugin.activity.labels.promotionsRemoved",
+    updated: "draftOrdersPlugin.activity.labels.promotionsUpdated",
+  },
+}
+
 function getEditActivityItems(
-  change: HttpTypes.AdminOrderChange
+  change: HttpTypes.AdminOrderChange,
+  t: TFunction,
+  tp: PluralT
 ): ActivityItem[] {
   const activityItems: ActivityItem[] = []
   const counts = {
@@ -266,67 +295,26 @@ function getEditActivityItems(
   ) => {
     if (added === 0 && removed === 0) return
 
-    const getText = (count: number, singular: string, plural: string) =>
-      count === 1 ? `${count} ${singular}` : `${count} ${plural}`
-
-    const addedText = getText(
-      added,
-      type === "items"
-        ? "item"
-        : type === "shipping"
-        ? "shipping method"
-        : "promotion",
-      type === "items"
-        ? "items"
-        : type === "shipping"
-        ? "shipping methods"
-        : "promotions"
-    )
-    const removedText = getText(
-      Math.abs(removed),
-      type === "items"
-        ? "item"
-        : type === "shipping"
-        ? "shipping method"
-        : "promotion",
-      type === "items"
-        ? "items"
-        : type === "shipping"
-        ? "shipping methods"
-        : "promotions"
-    )
+    const keys = ACTIVITY_KEYS[type]
+    const addedText = tp(keys.count, added)
+    const removedText = tp(keys.count, Math.abs(removed))
 
     const content =
       added && removed
-        ? `Added ${addedText}, removed ${removedText}`
+        ? t("draftOrdersPlugin.activity.addedAndRemoved", {
+            added: addedText,
+            removed: removedText,
+          })
         : added
-        ? `Added ${addedText}`
-        : `Removed ${removedText}`
+        ? t("draftOrdersPlugin.activity.added", { added: addedText })
+        : t("draftOrdersPlugin.activity.removed", { removed: removedText })
 
     const label =
       added && removed
-        ? `${
-            type === "items"
-              ? "Items"
-              : type === "shipping"
-              ? "Shipping methods"
-              : "Promotions"
-          } updated`
+        ? t(keys.updated)
         : added
-        ? `${
-            type === "items"
-              ? "Items"
-              : type === "shipping"
-              ? "Shipping methods"
-              : "Promotions"
-          } added`
-        : `${
-            type === "items"
-              ? "Items"
-              : type === "shipping"
-              ? "Shipping methods"
-              : "Promotions"
-          } removed`
+        ? t(keys.added)
+        : t(keys.removed)
 
     activityItems.push({
       label,
@@ -351,15 +339,21 @@ function getEditActivityItems(
   return activityItems
 }
 
-function getTransferActivityItem(change: HttpTypes.AdminOrderChange) {
+function getTransferActivityItem(
+  change: HttpTypes.AdminOrderChange,
+  t: TFunction
+) {
   return {
-    label: "Transferred",
-    content: "Draft order transferred",
+    label: t("draftOrdersPlugin.activity.labels.transferred"),
+    content: t("draftOrdersPlugin.activity.content.transferred"),
     timestamp: new Date(change.created_at).toISOString(),
   }
 }
 
-function getUpdateOrderActivityItem(change: HttpTypes.AdminOrderChange) {
+function getUpdateOrderActivityItem(
+  change: HttpTypes.AdminOrderChange,
+  t: TFunction
+) {
   const { details } = change.actions?.[0] || {}
 
   if (!details) {
@@ -369,31 +363,31 @@ function getUpdateOrderActivityItem(change: HttpTypes.AdminOrderChange) {
   switch (details.type) {
     case "customer_id":
       return {
-        label: "Customer updated",
+        label: t("draftOrdersPlugin.activity.labels.customerUpdated"),
         timestamp: new Date(change.created_at).toISOString(),
         userId: change.confirmed_by,
       }
     case "sales_channel_id":
       return {
-        label: "Sales channel updated",
+        label: t("draftOrdersPlugin.activity.labels.salesChannelUpdated"),
         timestamp: new Date(change.created_at).toISOString(),
         userId: change.confirmed_by,
       }
     case "billing_address":
       return {
-        label: "Billing address updated",
+        label: t("draftOrdersPlugin.activity.labels.billingAddressUpdated"),
         timestamp: new Date(change.created_at).toISOString(),
         userId: change.confirmed_by,
       }
     case "shipping_address":
       return {
-        label: "Shipping address updated",
+        label: t("draftOrdersPlugin.activity.labels.shippingAddressUpdated"),
         timestamp: new Date(change.created_at).toISOString(),
         userId: change.confirmed_by,
       }
     case "email":
       return {
-        label: "Email updated",
+        label: t("draftOrdersPlugin.activity.labels.emailUpdated"),
         timestamp: new Date(change.created_at).toISOString(),
         userId: change.confirmed_by,
       }
@@ -405,14 +399,16 @@ function getUpdateOrderActivityItem(change: HttpTypes.AdminOrderChange) {
 
 function getActivityItems(
   order: HttpTypes.AdminOrder,
-  changes: HttpTypes.AdminOrderChange[]
+  changes: HttpTypes.AdminOrderChange[],
+  t: TFunction,
+  tp: PluralT
 ) {
   const items: ActivityItem[] = []
 
   if (order.created_at) {
     items.push({
-      label: "Created",
-      content: "Draft order created",
+      label: t("draftOrdersPlugin.activity.labels.created"),
+      content: t("draftOrdersPlugin.activity.content.created"),
       timestamp: new Date(order.created_at).toISOString(),
     })
   }
@@ -424,14 +420,14 @@ function getActivityItems(
 
     switch (change.change_type) {
       case "edit": {
-        items.push(...getEditActivityItems(change))
+        items.push(...getEditActivityItems(change, t, tp))
         break
       }
       case "transfer":
-        items.push(getTransferActivityItem(change))
+        items.push(getTransferActivityItem(change, t))
         break
       case "update_order": {
-        const item = getUpdateOrderActivityItem(change)
+        const item = getUpdateOrderActivityItem(change, t)
 
         if (item) {
           items.push(item)

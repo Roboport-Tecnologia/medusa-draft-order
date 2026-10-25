@@ -1,7 +1,9 @@
 import { XMark } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import { Badge, IconButton, Skeleton, Text } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 import { useCustomerAddress } from "../../hooks/api/customers"
+import { useCountryName } from "../../hooks/common/use-country-name"
 import { getFormattedAddress } from "../../lib/utils/address-utils"
 
 interface AddressCardProps {
@@ -17,6 +19,7 @@ export const AddressCard = ({
   tag = "shipping",
   onRemove,
 }: AddressCardProps) => {
+  const { t } = useTranslation()
   const { address, isPending, isError, error } = useCustomerAddress(
     customerId,
     addressId
@@ -32,7 +35,9 @@ export const AddressCard = ({
     <div className="px-3 py-2 rounded-lg bg-ui-bg-component shadow-elevation-card-rest flex items-center gap-4">
       {!isReady ? <LoadingState /> : <AddressInfo address={address} />}
       <Badge size="2xsmall">
-        {tag === "shipping" ? "Shipping" : "Billing"}
+        {tag === "shipping"
+          ? t("draftOrdersPlugin.addressCard.shipping")
+          : t("draftOrdersPlugin.addressCard.billing")}
       </Badge>
       {onRemove && (
         <IconButton
@@ -64,7 +69,8 @@ interface AddressInfoProps {
 }
 
 const AddressInfo = ({ address }: AddressInfoProps) => {
-  const addressSegments = getFormattedAddress(address)
+  const getCountryName = useCountryName()
+  const addressSegments = getFormattedAddress(address, getCountryName)
 
   return (
     <div className="flex flex-col flex-1">

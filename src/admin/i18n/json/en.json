@@ -1,0 +1,362 @@
+{
+  "draftOrdersPlugin": {
+    "general": {
+      "optional": "(Optional)",
+      "warning": "Warning",
+      "tip": "Tip",
+      "cancel": "Cancel",
+      "save": "Save",
+      "continue": "Continue",
+      "add": "Add",
+      "update": "Update",
+      "confirm": "Confirm",
+      "loading": "Loading data for the draft order, please wait..."
+    },
+    "menu": {
+      "drafts": "Drafts"
+    },
+    "combobox": {
+      "selected": "Selected",
+      "noResults": "No results found",
+      "create": "Create \"{{value}}\"",
+      "showPopup": "Show popup",
+      "hidePopup": "Hide popup"
+    },
+    "numberInput": {
+      "decrease": "Decrease by {{step}}",
+      "increase": "Increase by {{step}}"
+    },
+    "table": {
+      "filter": "Filter",
+      "sort": "Sort",
+      "search": "Search",
+      "clearAll": "Clear all",
+      "selected_one": "{{count}} selected",
+      "selected_other": "{{count}} selected",
+      "pagination": {
+        "of": "of",
+        "results": "results",
+        "pages": "pages",
+        "prev": "Prev",
+        "next": "Next"
+      }
+    },
+    "fields": {
+      "region": "Region",
+      "salesChannel": "Sales Channel",
+      "customer": "Customer",
+      "email": "Email",
+      "country": "Country",
+      "selectCountry": "Select country",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "company": "Company",
+      "address": "Address",
+      "address2": "Apartment, suite, etc.",
+      "postalCode": "Postal code",
+      "city": "City",
+      "province": "Province / State",
+      "phone": "Phone"
+    },
+    "list": {
+      "columns": {
+        "displayId": "Display ID",
+        "date": "Date"
+      }
+    },
+    "dateFilters": {
+      "today": "Today",
+      "last7Days": "Last 7 days",
+      "last30Days": "Last 30 days",
+      "last90Days": "Last 90 days",
+      "last12Months": "Last 12 months",
+      "starting": "Starting",
+      "ending": "Ending",
+      "custom": "Custom",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at"
+    },
+    "unsavedChanges": {
+      "title": "Unsaved Changes",
+      "description": "You have unsaved changes. Are you sure you want to leave?"
+    },
+    "detail": {
+      "title": "Draft Order #{{displayId}}",
+      "createdFrom": "{{date}} from {{salesChannel}}",
+      "editSalesChannel": "Edit sales channel",
+      "delete": "Delete draft order"
+    },
+    "activeEdit": {
+      "title": "Edit pending",
+      "noChanges": "There is a pending edit on this draft order with no changes. Click below to cancel it, or open one of the menus to start making changes.",
+      "withChanges": "There is a pending edit on this draft order with changes. Click below to cancel it, or continue to complete the edit.",
+      "cancelled": "Edit cancelled"
+    },
+    "summary": {
+      "title": "Summary",
+      "editItems": "Edit items",
+      "editPromotions": "Edit promotions",
+      "subtotal": "Subtotal",
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} items",
+      "shipping": "Shipping",
+      "discount": "Discount",
+      "tax": "Tax",
+      "total": "Total",
+      "convert": {
+        "action": "Convert to order",
+        "title": "Are you sure?",
+        "description": "You are about to convert this draft order to an order. This action cannot be undone.",
+        "success": "Draft order converted to order"
+      }
+    },
+    "shippingSection": {
+      "title": "Shipping",
+      "quantityBadge_one": "{{quantity}}x item",
+      "quantityBadge_other": "{{quantity}}x items",
+      "profileItemCount_one": "{{count}} items",
+      "profileItemCount_other": "{{count}} item",
+      "requiresShipping": "Requires shipping",
+      "edit": "Edit shipping",
+      "add": "Add shipping"
+    },
+    "metadata": {
+      "title": "Metadata",
+      "keys_one": "{{count}} keys",
+      "keys_other": "{{count}} keys",
+      "description": "Add metadata to the draft order.",
+      "success": "Metadata updated",
+      "key": "Key",
+      "value": "Value",
+      "disabledRow": "This row is disabled because it contains non-primitive data.",
+      "insertRowAbove": "Insert row above",
+      "insertRowBelow": "Insert row below",
+      "deleteRow": "Delete row",
+      "disabledRowsLabel": "Some rows are disabled",
+      "disabledRowsDescription": "This object contains non-primitive metadata, such as arrays or objects, that can't be edited here. To edit the disabled rows, use the API directly."
+    },
+    "json": {
+      "keys_one": "{{count}} key",
+      "keys_other": "{{count}} keys",
+      "description": "View the JSON representation of the draft order."
+    },
+    "customer": {
+      "title": "Customer",
+      "transferOwnership": "Transfer ownership",
+      "editShippingAddress": "Edit shipping address",
+      "editBillingAddress": "Edit billing address",
+      "editEmail": "Edit email",
+      "id": "ID",
+      "contact": "Contact",
+      "shippingAddress": "Shipping address",
+      "billingAddress": "Billing address",
+      "sameAsShipping": "Same as shipping address"
+    },
+    "addressCard": {
+      "shipping": "Shipping",
+      "billing": "Billing"
+    },
+    "activity": {
+      "title": "Activity",
+      "showMore_one": "Show {{count}} more activity",
+      "showMore_other": "Show {{count}} more activities",
+      "by": "By",
+      "counts": {
+        "items_one": "{{count}} item",
+        "items_other": "{{count}} items",
+        "shippingMethods_one": "{{count}} shipping method",
+        "shippingMethods_other": "{{count}} shipping methods",
+        "promotions_one": "{{count}} promotion",
+        "promotions_other": "{{count}} promotions"
+      },
+      "added": "Added {{added}}",
+      "removed": "Removed {{removed}}",
+      "addedAndRemoved": "Added {{added}}, removed {{removed}}",
+      "labels": {
+        "itemsAdded": "Items added",
+        "itemsRemoved": "Items removed",
+        "itemsUpdated": "Items updated",
+        "shippingMethodsAdded": "Shipping methods added",
+        "shippingMethodsRemoved": "Shipping methods removed",
+        "shippingMethodsUpdated": "Shipping methods updated",
+        "promotionsAdded": "Promotions added",
+        "promotionsRemoved": "Promotions removed",
+        "promotionsUpdated": "Promotions updated",
+        "transferred": "Transferred",
+        "customerUpdated": "Customer updated",
+        "salesChannelUpdated": "Sales channel updated",
+        "billingAddressUpdated": "Billing address updated",
+        "shippingAddressUpdated": "Shipping address updated",
+        "emailUpdated": "Email updated",
+        "created": "Created"
+      },
+      "content": {
+        "transferred": "Draft order transferred",
+        "created": "Draft order created"
+      }
+    },
+    "email": {
+      "title": "Edit Email",
+      "description": "Edit the email for the draft order"
+    },
+    "salesChannel": {
+      "title": "Edit Sales Channel",
+      "description": "Update which sales channel the draft order is associated with",
+      "placeholder": "Select sales channel",
+      "success": "Sales channel updated"
+    },
+    "customItems": {
+      "title": "Edit Custom Items"
+    },
+    "shippingAddress": {
+      "title": "Edit Shipping Address",
+      "description": "Edit the shipping address for the draft order"
+    },
+    "billingAddress": {
+      "title": "Edit Billing Address",
+      "description": "Edit the billing address for the draft order"
+    },
+    "create": {
+      "title": "Create Draft Order",
+      "description": "Create a new draft order",
+      "regionHint": "Choose region",
+      "regionPlaceholder": "Select region",
+      "salesChannelHint": "Choose sales channel",
+      "emailHint": "Input a email to associate with the order",
+      "emailDisabled": "You cannot change the email when a customer is selected",
+      "emailPlaceholder": "john@doe.com",
+      "customerHint": "Choose an existing customer",
+      "customerPlaceholder": "Select customer",
+      "shippingAddress": "Shipping address",
+      "billingAddress": "Billing address",
+      "shippingAddressHint": "Address used for shipping",
+      "billingAddressHint": "Address used for billing",
+      "sameAsShipping": "Same as shipping address",
+      "sameAsShippingHint": "Use the same address for billing and shipping",
+      "savedAddresses": "Saved addresses",
+      "savedAddressesHint": "Choose one of the customers saved addresses.",
+      "selectShippingAddress": "Select shipping address",
+      "selectBillingAddress": "Select billing address",
+      "customerOrEmailRequired": "Either a customer or email must be provided",
+      "shippingAddressRequired": "Shipping address is required",
+      "billingAddressRequired": "Billing address is required"
+    },
+    "items": {
+      "title": "Edit Items",
+      "description": "Edit the items in the draft order",
+      "itemsLabel": "Items",
+      "itemsHint": "Choose items from the product catalog.",
+      "searchPlaceholder": "Search items",
+      "columns": {
+        "item": "Item",
+        "quantity": "Quantity",
+        "price": "Price"
+      },
+      "empty": {
+        "title": "There are no items in this order",
+        "description": "Add items to the order to get started."
+      },
+      "noResults": {
+        "title": "No items found",
+        "description": "No items found for \"{{query}}\"."
+      },
+      "addItems": "Add items",
+      "addCustomItem": "Add custom item"
+    },
+    "orderEdit": {
+      "requestFailed": "Failed to request order edit: {{message}}",
+      "confirmFailed": "Failed to confirm order edit: {{message}}"
+    },
+    "variants": {
+      "title": "Product Variants",
+      "description": "Choose product variants to add to the order.",
+      "submit": "Update items",
+      "notManaged": "Not managed",
+      "available_one": "{{quantity}} available",
+      "available_other": "{{quantity}} available",
+      "availableAtLocations": "{{available}} at {{locations}}",
+      "locations_one": "{{count}} location",
+      "locations_other": "{{count}} locations",
+      "columns": {
+        "product": "Product",
+        "variant": "Variant",
+        "sku": "SKU",
+        "updated": "Updated",
+        "created": "Created",
+        "stock": "Stock"
+      },
+      "oldestFirst": "Oldest first",
+      "newestFirst": "Newest first"
+    },
+    "customItem": {
+      "title": "Add custom item",
+      "description": "Add a custom item to the order. This will add a new line item that is not associated with an existing product.",
+      "titleLabel": "Title",
+      "titleHint": "Enter the title of the item",
+      "unitPriceLabel": "Unit price",
+      "unitPriceHint": "Enter the unit price of the item",
+      "quantityLabel": "Quantity",
+      "quantityHint": "Enter the quantity of the item",
+      "submit": "Add item"
+    },
+    "shipping": {
+      "title": "Shipping",
+      "noItems": "This draft order currently has no items. Add items to the order before adding shipping.",
+      "editTitle": "Edit Shipping",
+      "description": "Choose which shipping method(s) to use for the items in the order.",
+      "shippingProfile": "Shipping profile",
+      "action": "Action",
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} items",
+      "quantityBadge_one": "{{quantity}}x item",
+      "quantityBadge_other": "{{quantity}}x items",
+      "editOption": "Edit shipping option",
+      "removeOption": "Remove shipping option",
+      "addOption": "Add shipping option",
+      "formDescription": "Add a shipping method for the selected shipping profile. You can see the items that will be shipped using this method in the preview below.",
+      "itemsToShip": "Items to ship",
+      "itemsToShipHint": "Items with the selected shipping profile.",
+      "location": "Location",
+      "locationHint": "Choose where you want to ship the items from.",
+      "locationPlaceholder": "Select location",
+      "chooseLocationAndProfile": "Choose a location and shipping profile first.",
+      "chooseLocation": "Choose a location first.",
+      "chooseProfile": "Choose a shipping profile first.",
+      "shippingOption": "Shipping option",
+      "shippingOptionHint": "Choose the shipping option to use.",
+      "shippingOptionPlaceholder": "Select shipping option",
+      "customAmount": "Custom amount",
+      "customAmountHint": "Set a custom amount for the shipping option."
+    },
+    "promotions": {
+      "title": "Edit Promotions",
+      "apply": "Apply promotions",
+      "applyHint": "Manage promotions that should be applied to the order.",
+      "allocation": {
+        "each": "each",
+        "across": "across",
+        "once": "once"
+      }
+    },
+    "transferOwnership": {
+      "title": "Transfer Ownership",
+      "description": "Transfer the ownership of this draft order to a new customer",
+      "currentOwner": "Current owner",
+      "currentOwnerHint": "The customer that is currently associated with this draft order.",
+      "newCustomer": "New customer",
+      "newCustomerHint": "The customer to transfer this draft order to.",
+      "placeholder": "Select customer",
+      "success": "Customer updated"
+    },
+    "validation": {
+      "required": "Invalid input: expected {{expected}}, received {{received}}",
+      "invalidType": "Invalid input: expected {{expected}}, received {{received}}",
+      "requiredText": "Too small: expected string to have {{comparison}}{{minimum}} characters",
+      "tooShort": "Too small: expected string to have {{comparison}}{{minimum}} characters",
+      "invalidEmail": "Invalid email address",
+      "invalidValue": "Invalid input: expected {{value}}",
+      "invalidOption": "Invalid option: expected one of {{values}}",
+      "invalidInput": "Invalid input"
+    }
+  }
+}

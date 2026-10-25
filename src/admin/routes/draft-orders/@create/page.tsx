@@ -12,6 +12,7 @@ import {
 } from "@medusajs/ui"
 import { Fragment, useCallback } from "react"
 import { Control, useForm, UseFormSetValue, useWatch } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { z } from "zod"
 import { AddressCard } from "../../../components/common/address-card"
 import { ConditionalTooltip } from "../../../components/common/conditional-tooltip"
@@ -23,6 +24,8 @@ import { CountrySelect } from "../../../components/inputs/country-select"
 import { RouteFocusModal, useRouteModal } from "../../../components/modals"
 import { useCreateDraftOrder } from "../../../hooks/api/draft-orders"
 import { useComboboxData } from "../../../hooks/common/use-combobox-data"
+import { useCountryName } from "../../../hooks/common/use-country-name"
+import { useZodErrorMap } from "../../../hooks/common/use-zod-error-map"
 import { sdk } from "../../../lib/queries/sdk"
 import { addressSchema } from "../../../lib/schemas/address"
 import { getFormattedAddress } from "../../../lib/utils/address-utils"
@@ -37,6 +40,8 @@ const Create = () => {
 }
 
 const CreateForm = () => {
+  const { t } = useTranslation()
+  const zodErrorMap = useZodErrorMap()
   const { handleSuccess } = useRouteModal()
 
   const form = useForm<z.infer<typeof schema>>({
@@ -51,7 +56,7 @@ const CreateForm = () => {
       billing_address: null,
       same_as_shipping: true,
     },
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema, { error: zodErrorMap }),
   })
 
   const regions = useComboboxData({
@@ -127,10 +132,12 @@ const CreateForm = () => {
             <div className="flex w-full max-w-[720px] flex-col gap-y-6 px-2 py-16">
               <div>
                 <RouteFocusModal.Title asChild>
-                  <Heading>Create Draft Order</Heading>
+                  <Heading>{t("draftOrdersPlugin.create.title")}</Heading>
                 </RouteFocusModal.Title>
                 <RouteFocusModal.Description asChild>
-                  <span className="sr-only">Create a new draft order</span>
+                  <span className="sr-only">
+                    {t("draftOrdersPlugin.create.description")}
+                  </span>
                 </RouteFocusModal.Description>
               </div>
               <Divider variant="dashed" />
@@ -143,8 +150,12 @@ const CreateForm = () => {
                       <Form.Item>
                         <div className="grid grid-cols-2 gap-x-3">
                           <div>
-                            <Form.Label>Region</Form.Label>
-                            <Form.Hint>Choose region</Form.Hint>
+                            <Form.Label>
+                              {t("draftOrdersPlugin.fields.region")}
+                            </Form.Label>
+                            <Form.Hint>
+                              {t("draftOrdersPlugin.create.regionHint")}
+                            </Form.Hint>
                           </div>
                           <div>
                             <Form.Control>
@@ -156,7 +167,7 @@ const CreateForm = () => {
                                 onSearchValueChange={
                                   regions.onSearchValueChange
                                 }
-                                placeholder="Select region"
+                                placeholder={t("draftOrdersPlugin.create.regionPlaceholder")}
                                 {...field}
                                 autoComplete="off"
                               />
@@ -179,8 +190,12 @@ const CreateForm = () => {
                       <Form.Item>
                         <div className="grid grid-cols-2 gap-x-3">
                           <div>
-                            <Form.Label>Sales Channel</Form.Label>
-                            <Form.Hint>Choose sales channel</Form.Hint>
+                            <Form.Label>
+                              {t("draftOrdersPlugin.fields.salesChannel")}
+                            </Form.Label>
+                            <Form.Hint>
+                              {t("draftOrdersPlugin.create.salesChannelHint")}
+                            </Form.Hint>
                           </div>
                           <div>
                             <Form.Control>
@@ -194,7 +209,7 @@ const CreateForm = () => {
                                 onSearchValueChange={
                                   salesChannels.onSearchValueChange
                                 }
-                                placeholder="Select sales channel"
+                                placeholder={t("draftOrdersPlugin.salesChannel.placeholder")}
                                 {...field}
                               />
                             </Form.Control>
@@ -229,10 +244,10 @@ const CreateForm = () => {
           <div className="flex justify-end gap-x-2">
             <RouteFocusModal.Close asChild>
               <Button variant="secondary" size="small">
-                Cancel
+                {t("draftOrdersPlugin.general.cancel")}
               </Button>
             </RouteFocusModal.Close>
-            <Button size="small">Save</Button>
+            <Button size="small">{t("draftOrdersPlugin.general.save")}</Button>
           </div>
         </RouteFocusModal.Footer>
       </KeyboundForm>
@@ -245,6 +260,7 @@ interface EmailFieldProps {
 }
 
 const EmailField = ({ control }: EmailFieldProps) => {
+  const { t } = useTranslation()
   const customerId = useWatch({ control, name: "customer_id" })
 
   return (
@@ -256,18 +272,18 @@ const EmailField = ({ control }: EmailFieldProps) => {
           <Form.Item>
             <div className="grid grid-cols-2 gap-x-3">
               <div>
-                <Form.Label>Email</Form.Label>
-                <Form.Hint>Input a email to associate with the order</Form.Hint>
+                <Form.Label>{t("draftOrdersPlugin.fields.email")}</Form.Label>
+                <Form.Hint>{t("draftOrdersPlugin.create.emailHint")}</Form.Hint>
               </div>
               <ConditionalTooltip
-                content="You cannot change the email when a customer is selected"
+                content={t("draftOrdersPlugin.create.emailDisabled")}
                 showTooltip={!!customerId}
               >
                 <div>
                   <Form.Control>
                     <Input
                       {...field}
-                      placeholder="john@doe.com"
+                      placeholder={t("draftOrdersPlugin.create.emailPlaceholder")}
                       disabled={field.disabled || !!customerId}
                     />
                   </Form.Control>
@@ -287,6 +303,7 @@ interface CustomerFieldProps {
 }
 
 const CustomerField = ({ control, setValue }: CustomerFieldProps) => {
+  const { t } = useTranslation()
   const email = useWatch({ control, name: "email" })
   const customerId = useWatch({ control, name: "customer_id" })
 
@@ -344,8 +361,10 @@ const CustomerField = ({ control, setValue }: CustomerFieldProps) => {
           <Form.Item>
             <div className="grid grid-cols-2 gap-x-3">
               <div>
-                <Form.Label optional>Customer</Form.Label>
-                <Form.Hint>Choose an existing customer</Form.Hint>
+                <Form.Label optional>
+                  {t("draftOrdersPlugin.fields.customer")}
+                </Form.Label>
+                <Form.Hint>{t("draftOrdersPlugin.create.customerHint")}</Form.Hint>
               </div>
               <div>
                 <Form.Control>
@@ -358,7 +377,7 @@ const CustomerField = ({ control, setValue }: CustomerFieldProps) => {
                       isFetchingNextPage={customers.isFetchingNextPage}
                       searchValue={customers.searchValue}
                       onSearchValueChange={customers.onSearchValueChange}
-                      placeholder="Select customer"
+                      placeholder={t("draftOrdersPlugin.create.customerPlaceholder")}
                       onChange={(value) => {
                         onPropagateEmail(value)
                         onChange(value)
@@ -384,6 +403,8 @@ interface AddressFieldProps {
 }
 
 const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
+  const { t } = useTranslation()
+  const getCountryName = useCountryName()
   const customerId = useWatch({ control, name: "customer_id" })
   const addressId = useWatch({ control, name: `${type}_id` })
   const sameAsShipping = useWatch({ control, name: "same_as_shipping" })
@@ -415,7 +436,10 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
     queryKey: [type, customerId],
     getOptions: (data) => {
       return data.addresses.map((address) => {
-        const formattedAddress = getFormattedAddress(address).join(",\n")
+        const formattedAddress = getFormattedAddress(
+          address,
+          getCountryName
+        ).join(",\n")
 
         return {
           label: formattedAddress,
@@ -454,11 +478,14 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
     <div className="grid grid-cols-2 gap-x-3">
       <div className="flex flex-col gap-y-1">
         <Label size="small" weight="plus">
-          {type === "shipping_address" ? "Shipping address" : "Billing address"}
+          {type === "shipping_address"
+            ? t("draftOrdersPlugin.create.shippingAddress")
+            : t("draftOrdersPlugin.create.billingAddress")}
         </Label>
         <Hint>
-          Address used for{" "}
-          {type === "shipping_address" ? "shipping" : "billing"}
+          {type === "shipping_address"
+            ? t("draftOrdersPlugin.create.shippingAddressHint")
+            : t("draftOrdersPlugin.create.billingAddressHint")}
         </Hint>
       </div>
       <div className="flex flex-col gap-y-3">
@@ -490,9 +517,11 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
                       />
                     </Form.Control>
                     <div className="flex flex-col">
-                      <Form.Label>Same as shipping address</Form.Label>
+                      <Form.Label>
+                        {t("draftOrdersPlugin.create.sameAsShipping")}
+                      </Form.Label>
                       <Form.Hint>
-                        Use the same address for billing and shipping
+                        {t("draftOrdersPlugin.create.sameAsShippingHint")}
                       </Form.Hint>
                     </div>
                   </div>
@@ -529,10 +558,10 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
                         ) : (
                           <Fragment>
                             <Form.Label optional variant="subtle">
-                              Saved addresses
+                              {t("draftOrdersPlugin.create.savedAddresses")}
                             </Form.Label>
                             <Form.Hint>
-                              Choose one of the customers saved addresses.
+                              {t("draftOrdersPlugin.create.savedAddressesHint")}
                             </Form.Hint>
                             <Form.Control>
                               <Combobox
@@ -547,8 +576,12 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
                                 }
                                 placeholder={
                                   type === "shipping_address"
-                                    ? "Select shipping address"
-                                    : "Select billing address"
+                                    ? t(
+                                        "draftOrdersPlugin.create.selectShippingAddress"
+                                      )
+                                    : t(
+                                        "draftOrdersPlugin.create.selectBillingAddress"
+                                      )
                                 }
                                 onChange={(value) => {
                                   onSelectAddress(value)
@@ -574,7 +607,9 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
                   name={`${type}.country_code`}
                   render={({ field }) => (
                     <Form.Item>
-                      <Form.Label variant="subtle">Country</Form.Label>
+                      <Form.Label variant="subtle">
+                        {t("draftOrdersPlugin.fields.country")}
+                      </Form.Label>
                       <Form.Control>
                         <CountrySelect {...field} />
                       </Form.Control>
@@ -588,7 +623,9 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
                     name={`${type}.first_name`}
                     render={({ field }) => (
                       <Form.Item>
-                        <Form.Label variant="subtle">First name</Form.Label>
+                        <Form.Label variant="subtle">
+                          {t("draftOrdersPlugin.fields.firstName")}
+                        </Form.Label>
                         <Form.Control>
                           <Input {...field} />
                         </Form.Control>
@@ -601,7 +638,9 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
                     name={`${type}.last_name`}
                     render={({ field }) => (
                       <Form.Item>
-                        <Form.Label variant="subtle">Last name</Form.Label>
+                        <Form.Label variant="subtle">
+                          {t("draftOrdersPlugin.fields.lastName")}
+                        </Form.Label>
                         <Form.Control>
                           <Input {...field} />
                         </Form.Control>
@@ -616,7 +655,7 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
                   render={({ field }) => (
                     <Form.Item>
                       <Form.Label optional variant="subtle">
-                        Company
+                        {t("draftOrdersPlugin.fields.company")}
                       </Form.Label>
                       <Form.Control>
                         <Input {...field} />
@@ -630,7 +669,9 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
                   name={`${type}.address_1`}
                   render={({ field }) => (
                     <Form.Item>
-                      <Form.Label variant="subtle">Address</Form.Label>
+                      <Form.Label variant="subtle">
+                        {t("draftOrdersPlugin.fields.address")}
+                      </Form.Label>
                       <Form.Control>
                         <Input {...field} />
                       </Form.Control>
@@ -644,7 +685,7 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
                   render={({ field }) => (
                     <Form.Item>
                       <Form.Label optional variant="subtle">
-                        Apartment, suite, etc.
+                        {t("draftOrdersPlugin.fields.address2")}
                       </Form.Label>
                       <Form.Control>
                         <Input {...field} />
@@ -659,7 +700,9 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
                     name={`${type}.postal_code`}
                     render={({ field }) => (
                       <Form.Item>
-                        <Form.Label variant="subtle">Postal code</Form.Label>
+                        <Form.Label variant="subtle">
+                          {t("draftOrdersPlugin.fields.postalCode")}
+                        </Form.Label>
                         <Form.Control>
                           <Input {...field} />
                         </Form.Control>
@@ -672,7 +715,9 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
                     name={`${type}.city`}
                     render={({ field }) => (
                       <Form.Item>
-                        <Form.Label variant="subtle">City</Form.Label>
+                        <Form.Label variant="subtle">
+                          {t("draftOrdersPlugin.fields.city")}
+                        </Form.Label>
                         <Form.Control>
                           <Input {...field} />
                         </Form.Control>
@@ -687,7 +732,7 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
                   render={({ field }) => (
                     <Form.Item>
                       <Form.Label optional variant="subtle">
-                        Province / State
+                        {t("draftOrdersPlugin.fields.province")}
                       </Form.Label>
                       <Form.Control>
                         <Input {...field} />
@@ -702,7 +747,7 @@ const AddressField = ({ type, control, setValue }: AddressFieldProps) => {
                   render={({ field }) => (
                     <Form.Item>
                       <Form.Label optional variant="subtle">
-                        Phone
+                        {t("draftOrdersPlugin.fields.phone")}
                       </Form.Label>
                       <Form.Control>
                         <Input {...field} />
@@ -748,11 +793,12 @@ const schema = z
     billing_address: addressSchema.nullable(),
     same_as_shipping: z.boolean().default(true),
   })
+  // Custom issues carry the i18n key of their message (see useZodErrorMap).
   .superRefine((data, ctx) => {
     if (!data.customer_id && !data.email) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Either a customer or email must be provided",
+        params: { i18nKey: "draftOrdersPlugin.create.customerOrEmailRequired" },
         path: ["email"],
       })
     }
@@ -760,7 +806,7 @@ const schema = z
     if (!data.shipping_address && !data.shipping_address_id) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Shipping address is required",
+        params: { i18nKey: "draftOrdersPlugin.create.shippingAddressRequired" },
         path: ["shipping_address"],
       })
     }
@@ -769,7 +815,7 @@ const schema = z
       if (!data.billing_address && !data.billing_address_id) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Billing address is required",
+          params: { i18nKey: "draftOrdersPlugin.create.billingAddressRequired" },
           path: ["billing_address"],
         })
       }

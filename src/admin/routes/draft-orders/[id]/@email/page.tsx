@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { HttpTypes } from "@medusajs/types"
 import { Button, Heading, Input, toast } from "@medusajs/ui"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
 import { z } from "zod"
 import { Form } from "../../../../components/common/form"
@@ -9,8 +10,10 @@ import { KeyboundForm } from "../../../../components/common/keybound-form"
 import { RouteDrawer, useRouteModal } from "../../../../components/modals"
 import { useUpdateDraftOrder } from "../../../../hooks/api/draft-orders"
 import { useOrder } from "../../../../hooks/api/orders"
+import { useZodErrorMap } from "../../../../hooks/common/use-zod-error-map"
 
 const Email = () => {
+  const { t } = useTranslation()
   const { id } = useParams()
   const { order, isPending, isError, error } = useOrder(id!, {
     fields: "+email",
@@ -26,10 +29,12 @@ const Email = () => {
     <RouteDrawer>
       <RouteDrawer.Header>
         <RouteDrawer.Title asChild>
-          <Heading>Edit Email</Heading>
+          <Heading>{t("draftOrdersPlugin.email.title")}</Heading>
         </RouteDrawer.Title>
         <RouteDrawer.Description asChild>
-          <span className="sr-only">Edit the email for the draft order</span>
+          <span className="sr-only">
+            {t("draftOrdersPlugin.email.description")}
+          </span>
         </RouteDrawer.Description>
       </RouteDrawer.Header>
       {isReady && <EmailForm order={order} />}
@@ -42,11 +47,13 @@ interface EmailFormProps {
 }
 
 const EmailForm = ({ order }: EmailFormProps) => {
+  const { t } = useTranslation()
+  const zodErrorMap = useZodErrorMap()
   const form = useForm<z.infer<typeof schema>>({
     defaultValues: {
       email: order.email ?? "",
     },
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema, { error: zodErrorMap }),
   })
 
   const { mutateAsync, isPending } = useUpdateDraftOrder(order.id)
@@ -78,7 +85,7 @@ const EmailForm = ({ order }: EmailFormProps) => {
             name="email"
             render={({ field }) => (
               <Form.Item>
-                <Form.Label>Email</Form.Label>
+                <Form.Label>{t("draftOrdersPlugin.fields.email")}</Form.Label>
                 <Form.Control>
                   <Input {...field} />
                 </Form.Control>
@@ -91,11 +98,11 @@ const EmailForm = ({ order }: EmailFormProps) => {
           <div className="flex justify-end gap-2">
             <RouteDrawer.Close asChild>
               <Button size="small" variant="secondary">
-                Cancel
+                {t("draftOrdersPlugin.general.cancel")}
               </Button>
             </RouteDrawer.Close>
             <Button size="small" type="submit" isLoading={isPending}>
-              Save
+              {t("draftOrdersPlugin.general.save")}
             </Button>
           </div>
         </RouteDrawer.Footer>

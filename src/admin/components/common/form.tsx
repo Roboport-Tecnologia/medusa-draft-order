@@ -23,6 +23,7 @@ import {
   useFormContext,
   useFormState,
 } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 
 const Provider = FormProvider
 
@@ -120,6 +121,7 @@ const Label = forwardRef<
     },
     ref
   ) => {
+    const { t } = useTranslation()
     const { formLabelId, formItemId } = useFormField()
 
     return (
@@ -146,7 +148,7 @@ const Label = forwardRef<
         {icon}
         {optional && (
           <Text size="small" leading="compact" className="text-ui-fg-muted">
-            (Optional)
+            {t("draftOrdersPlugin.general.optional")}
           </Text>
         )}
       </div>

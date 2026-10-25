@@ -1,23 +1,27 @@
+import type { Locale } from "date-fns"
 import { format, formatDistance, sub } from "date-fns"
 import { enUS } from "date-fns/locale"
 
-const LOCALE = enUS
-
-export function getRelativeDate(date: string | Date): string {
+export function getRelativeDate(
+  date: string | Date,
+  locale: Locale = enUS
+): string {
   const now = new Date()
 
   return formatDistance(sub(new Date(date), { minutes: 0 }), now, {
     addSuffix: true,
-    locale: LOCALE,
+    locale,
   })
 }
 
 export const getFullDate = ({
   date,
   includeTime = false,
+  locale = enUS,
 }: {
   date: string | Date
   includeTime?: boolean
+  locale?: Locale
 }) => {
   const ensuredDate = new Date(date)
 
@@ -28,6 +32,6 @@ export const getFullDate = ({
   const timeFormat = includeTime ? "p" : ""
 
   return format(ensuredDate, `PP ${timeFormat}`, {
-    locale: LOCALE,
+    locale,
   })
 }

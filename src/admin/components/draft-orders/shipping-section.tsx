@@ -18,11 +18,12 @@ import {
   Tooltip,
 } from "@medusajs/ui"
 import { Accordion } from "radix-ui"
+import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 
 import { useShippingOptions } from "../../hooks/api/shipping-options"
 import { getUniqueShippingProfiles } from "../../lib/utils/order-utils"
-import { pluralize } from "../../lib/utils/string-utils"
+import { usePlural } from "../../hooks/common/use-plural"
 import { Thumbnail } from "../common/thumbnail"
 import { useMemo } from "react"
 
@@ -31,6 +32,7 @@ interface ShippingSectionProps {
 }
 
 export const ShippingSection = ({ order }: ShippingSectionProps) => {
+  const { t } = useTranslation()
   const orderHasShipping = order.shipping_methods.length > 0
 
   const {
@@ -101,7 +103,7 @@ export const ShippingSection = ({ order }: ShippingSectionProps) => {
   return (
     <Container className="p-0 overflow-hidden">
       <div className="px-6 py-4">
-        <Heading>Shipping</Heading>
+        <Heading>{t("draftOrdersPlugin.shippingSection.title")}</Heading>
       </div>
       <Divider variant="dashed" />
       <Accordion.Root type="multiple">
@@ -156,6 +158,7 @@ const ProfileWithShipping = ({
   shippingOption,
   isLast,
 }: ProfileWithShipping) => {
+  const tp = usePlural()
   const hasItems = profile.items.length > 0
 
   return (
@@ -191,11 +194,16 @@ const ProfileWithShipping = ({
                 >
                   <Shopping className="shrink-0" />
                   <span className="truncate">
-                    {profile.items.reduce(
-                      (acc, item) => acc + item.quantity,
-                      0
+                    {tp(
+                      "draftOrdersPlugin.shippingSection.quantityBadge",
+                      profile.items.length,
+                      {
+                        quantity: profile.items.reduce(
+                          (acc, item) => acc + item.quantity,
+                          0
+                        ),
+                      }
                     )}
-                    x {pluralize(profile.items.length, "items", "item")}
                   </span>
                 </Badge>
               </Tooltip>
@@ -245,6 +253,9 @@ const ProfileWithoutShipping = ({
   profile,
   isLast,
 }: ProfileWithoutShippingProps) => {
+  const { t } = useTranslation()
+  const tp = usePlural()
+
   return (
     <div>
       <Accordion.Item value={profile.id}>
@@ -270,17 +281,18 @@ const ProfileWithoutShipping = ({
                   leading="compact"
                   className="text-ui-fg-subtle"
                 >
-                  {`${profile.items.length} ${pluralize(
-                    profile.items.length,
-                    "item",
-                    "items"
-                  )}`}
+                  {tp(
+                    "draftOrdersPlugin.shippingSection.profileItemCount",
+                    profile.items.length
+                  )}
                 </Text>
               </div>
             </div>
           </div>
           <div>
-            <StatusBadge color="orange">Requires shipping</StatusBadge>
+            <StatusBadge color="orange">
+              {t("draftOrdersPlugin.shippingSection.requiresShipping")}
+            </StatusBadge>
           </div>
         </div>
         <ShippingProfileItems profile={profile} />
@@ -345,11 +357,15 @@ interface FooterProps {
 }
 
 const Footer = ({ isSomeProfilesAssigned }: FooterProps) => {
+  const { t } = useTranslation()
+
   return (
     <div className="px-6 py-4 flex items-center justify-end bg-ui-bg-component">
       <Button size="small" variant="secondary" asChild>
         <Link to="shipping">
-          {isSomeProfilesAssigned ? "Edit shipping" : "Add shipping"}
+          {isSomeProfilesAssigned
+            ? t("draftOrdersPlugin.shippingSection.edit")
+            : t("draftOrdersPlugin.shippingSection.add")}
         </Link>
       </Button>
     </div>

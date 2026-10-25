@@ -1,6 +1,7 @@
 import { Prompt } from "@medusajs/ui"
 import { PropsWithChildren } from "react"
 import { FieldValues, UseFormReturn } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useBlocker } from "react-router-dom"
 import { Form } from "../../common/form"
 
@@ -16,6 +17,7 @@ export const RouteModalForm = <TFieldValues extends FieldValues = any>({
   children,
   onClose,
 }: RouteModalFormProps<TFieldValues>) => {
+  const { t } = useTranslation()
   const {
     formState: { isDirty },
   } = form
@@ -65,17 +67,19 @@ export const RouteModalForm = <TFieldValues extends FieldValues = any>({
       <Prompt open={blocker.state === "blocked"} variant="confirmation">
         <Prompt.Content>
           <Prompt.Header>
-            <Prompt.Title>Unsaved Changes</Prompt.Title>
+            <Prompt.Title>
+              {t("draftOrdersPlugin.unsavedChanges.title")}
+            </Prompt.Title>
             <Prompt.Description>
-              You have unsaved changes. Are you sure you want to leave?
+              {t("draftOrdersPlugin.unsavedChanges.description")}
             </Prompt.Description>
           </Prompt.Header>
           <Prompt.Footer>
             <Prompt.Cancel onClick={handleCancel} type="button">
-              Cancel
+              {t("draftOrdersPlugin.general.cancel")}
             </Prompt.Cancel>
             <Prompt.Action onClick={handleContinue} type="button">
-              Continue
+              {t("draftOrdersPlugin.general.continue")}
             </Prompt.Action>
           </Prompt.Footer>
         </Prompt.Content>

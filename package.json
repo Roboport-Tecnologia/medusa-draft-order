@@ -38,6 +38,7 @@
     "build": "medusa plugin:build",
     "dev": "node scripts/dev.mjs",
     "lint": "medusa lint",
+    "check:i18n": "node scripts/check-i18n.mjs",
     "prepublishOnly": "medusa plugin:build",
     "release:github": "sh scripts/release-github.sh"
   },

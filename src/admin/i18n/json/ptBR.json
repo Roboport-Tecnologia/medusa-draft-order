@@ -1,0 +1,362 @@
+{
+  "draftOrdersPlugin": {
+    "general": {
+      "optional": "(Opcional)",
+      "warning": "Aviso",
+      "tip": "Dica",
+      "cancel": "Cancelar",
+      "save": "Salvar",
+      "continue": "Continuar",
+      "add": "Adicionar",
+      "update": "Atualizar",
+      "confirm": "Confirmar",
+      "loading": "Carregando os dados do pedido rascunho, aguarde..."
+    },
+    "menu": {
+      "drafts": "Rascunhos"
+    },
+    "combobox": {
+      "selected": "Selecionado",
+      "noResults": "Nenhum resultado encontrado",
+      "create": "Criar \"{{value}}\"",
+      "showPopup": "Mostrar opções",
+      "hidePopup": "Ocultar opções"
+    },
+    "numberInput": {
+      "decrease": "Diminuir {{step}}",
+      "increase": "Aumentar {{step}}"
+    },
+    "table": {
+      "filter": "Filtrar",
+      "sort": "Ordenar",
+      "search": "Buscar",
+      "clearAll": "Limpar tudo",
+      "selected_one": "{{count}} selecionado",
+      "selected_other": "{{count}} selecionados",
+      "pagination": {
+        "of": "de",
+        "results": "resultados",
+        "pages": "páginas",
+        "prev": "Anterior",
+        "next": "Próximo"
+      }
+    },
+    "fields": {
+      "region": "Região",
+      "salesChannel": "Canal de venda",
+      "customer": "Cliente",
+      "email": "E-mail",
+      "country": "País",
+      "selectCountry": "Selecione o país",
+      "firstName": "Nome",
+      "lastName": "Sobrenome",
+      "company": "Empresa",
+      "address": "Endereço",
+      "address2": "Complemento",
+      "postalCode": "CEP",
+      "city": "Cidade",
+      "province": "Estado / província",
+      "phone": "Telefone"
+    },
+    "list": {
+      "columns": {
+        "displayId": "ID de exibição",
+        "date": "Data"
+      }
+    },
+    "dateFilters": {
+      "today": "Hoje",
+      "last7Days": "Últimos 7 dias",
+      "last30Days": "Últimos 30 dias",
+      "last90Days": "Últimos 90 dias",
+      "last12Months": "Últimos 12 meses",
+      "starting": "A partir de",
+      "ending": "Até",
+      "custom": "Personalizado",
+      "createdAt": "Criado em",
+      "updatedAt": "Atualizado em"
+    },
+    "unsavedChanges": {
+      "title": "Alterações não salvas",
+      "description": "Você tem alterações não salvas. Tem certeza de que deseja sair?"
+    },
+    "detail": {
+      "title": "Pedido rascunho #{{displayId}}",
+      "createdFrom": "{{date}}, via {{salesChannel}}",
+      "editSalesChannel": "Editar canal de venda",
+      "delete": "Excluir pedido rascunho"
+    },
+    "activeEdit": {
+      "title": "Edição pendente",
+      "noChanges": "Há uma edição pendente sem alterações neste pedido rascunho. Clique abaixo para cancelá-la ou abra um dos menus para começar a fazer alterações.",
+      "withChanges": "Há uma edição pendente com alterações neste pedido rascunho. Clique abaixo para cancelá-la ou continue para concluir a edição.",
+      "cancelled": "Edição cancelada"
+    },
+    "summary": {
+      "title": "Resumo",
+      "editItems": "Editar itens",
+      "editPromotions": "Editar promoções",
+      "subtotal": "Subtotal",
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} itens",
+      "shipping": "Envio",
+      "discount": "Desconto",
+      "tax": "Imposto",
+      "total": "Total",
+      "convert": {
+        "action": "Converter em pedido",
+        "title": "Tem certeza?",
+        "description": "Você está prestes a converter este pedido rascunho em pedido. Esta ação não pode ser desfeita.",
+        "success": "Pedido rascunho convertido em pedido"
+      }
+    },
+    "shippingSection": {
+      "title": "Envio",
+      "quantityBadge_one": "{{quantity}}x item",
+      "quantityBadge_other": "{{quantity}}x itens",
+      "profileItemCount_one": "{{count}} item",
+      "profileItemCount_other": "{{count}} itens",
+      "requiresShipping": "Requer envio",
+      "edit": "Editar envio",
+      "add": "Adicionar envio"
+    },
+    "metadata": {
+      "title": "Metadados",
+      "keys_one": "{{count}} chave",
+      "keys_other": "{{count}} chaves",
+      "description": "Adicione metadados ao pedido rascunho.",
+      "success": "Metadados atualizados",
+      "key": "Chave",
+      "value": "Valor",
+      "disabledRow": "Esta linha está desativada porque contém dados não primitivos.",
+      "insertRowAbove": "Inserir linha acima",
+      "insertRowBelow": "Inserir linha abaixo",
+      "deleteRow": "Excluir linha",
+      "disabledRowsLabel": "Algumas linhas estão desativadas",
+      "disabledRowsDescription": "Este objeto contém metadados não primitivos, como arrays ou objetos, que não podem ser editados aqui. Para editar as linhas desativadas, use a API diretamente."
+    },
+    "json": {
+      "keys_one": "{{count}} chave",
+      "keys_other": "{{count}} chaves",
+      "description": "Veja a representação em JSON do pedido rascunho."
+    },
+    "customer": {
+      "title": "Cliente",
+      "transferOwnership": "Transferir titularidade",
+      "editShippingAddress": "Editar endereço de entrega",
+      "editBillingAddress": "Editar endereço de cobrança",
+      "editEmail": "Editar e-mail",
+      "id": "ID",
+      "contact": "Contato",
+      "shippingAddress": "Endereço de entrega",
+      "billingAddress": "Endereço de cobrança",
+      "sameAsShipping": "Igual ao endereço de entrega"
+    },
+    "addressCard": {
+      "shipping": "Entrega",
+      "billing": "Cobrança"
+    },
+    "activity": {
+      "title": "Atividade",
+      "showMore_one": "Mostrar mais {{count}} atividade",
+      "showMore_other": "Mostrar mais {{count}} atividades",
+      "by": "Por",
+      "counts": {
+        "items_one": "{{count}} item",
+        "items_other": "{{count}} itens",
+        "shippingMethods_one": "{{count}} método de envio",
+        "shippingMethods_other": "{{count}} métodos de envio",
+        "promotions_one": "{{count}} promoção",
+        "promotions_other": "{{count}} promoções"
+      },
+      "added": "Inclusão de {{added}}",
+      "removed": "Remoção de {{removed}}",
+      "addedAndRemoved": "Inclusão de {{added}}, remoção de {{removed}}",
+      "labels": {
+        "itemsAdded": "Itens adicionados",
+        "itemsRemoved": "Itens removidos",
+        "itemsUpdated": "Itens atualizados",
+        "shippingMethodsAdded": "Métodos de envio adicionados",
+        "shippingMethodsRemoved": "Métodos de envio removidos",
+        "shippingMethodsUpdated": "Métodos de envio atualizados",
+        "promotionsAdded": "Promoções adicionadas",
+        "promotionsRemoved": "Promoções removidas",
+        "promotionsUpdated": "Promoções atualizadas",
+        "transferred": "Transferido",
+        "customerUpdated": "Cliente atualizado",
+        "salesChannelUpdated": "Canal de venda atualizado",
+        "billingAddressUpdated": "Endereço de cobrança atualizado",
+        "shippingAddressUpdated": "Endereço de entrega atualizado",
+        "emailUpdated": "E-mail atualizado",
+        "created": "Criado"
+      },
+      "content": {
+        "transferred": "Pedido rascunho transferido",
+        "created": "Pedido rascunho criado"
+      }
+    },
+    "email": {
+      "title": "Editar e-mail",
+      "description": "Edite o e-mail do pedido rascunho"
+    },
+    "salesChannel": {
+      "title": "Editar canal de venda",
+      "description": "Altere o canal de venda associado ao pedido rascunho",
+      "placeholder": "Selecione o canal de venda",
+      "success": "Canal de venda atualizado"
+    },
+    "customItems": {
+      "title": "Editar itens personalizados"
+    },
+    "shippingAddress": {
+      "title": "Editar endereço de entrega",
+      "description": "Edite o endereço de entrega do pedido rascunho"
+    },
+    "billingAddress": {
+      "title": "Editar endereço de cobrança",
+      "description": "Edite o endereço de cobrança do pedido rascunho"
+    },
+    "create": {
+      "title": "Criar pedido rascunho",
+      "description": "Crie um novo pedido rascunho",
+      "regionHint": "Escolha a região",
+      "regionPlaceholder": "Selecione a região",
+      "salesChannelHint": "Escolha o canal de venda",
+      "emailHint": "Informe um e-mail para associar ao pedido",
+      "emailDisabled": "Não é possível alterar o e-mail quando um cliente está selecionado",
+      "emailPlaceholder": "joao@exemplo.com.br",
+      "customerHint": "Escolha um cliente existente",
+      "customerPlaceholder": "Selecione o cliente",
+      "shippingAddress": "Endereço de entrega",
+      "billingAddress": "Endereço de cobrança",
+      "shippingAddressHint": "Endereço usado para a entrega",
+      "billingAddressHint": "Endereço usado para a cobrança",
+      "sameAsShipping": "Igual ao endereço de entrega",
+      "sameAsShippingHint": "Usar o mesmo endereço para cobrança e entrega",
+      "savedAddresses": "Endereços salvos",
+      "savedAddressesHint": "Escolha um dos endereços salvos do cliente.",
+      "selectShippingAddress": "Selecione o endereço de entrega",
+      "selectBillingAddress": "Selecione o endereço de cobrança",
+      "customerOrEmailRequired": "Informe um cliente ou um e-mail",
+      "shippingAddressRequired": "O endereço de entrega é obrigatório",
+      "billingAddressRequired": "O endereço de cobrança é obrigatório"
+    },
+    "items": {
+      "title": "Editar itens",
+      "description": "Edite os itens do pedido rascunho",
+      "itemsLabel": "Itens",
+      "itemsHint": "Escolha itens do catálogo de produtos.",
+      "searchPlaceholder": "Buscar itens",
+      "columns": {
+        "item": "Item",
+        "quantity": "Quantidade",
+        "price": "Preço"
+      },
+      "empty": {
+        "title": "Não há itens neste pedido",
+        "description": "Adicione itens ao pedido para começar."
+      },
+      "noResults": {
+        "title": "Nenhum item encontrado",
+        "description": "Nenhum item encontrado para \"{{query}}\"."
+      },
+      "addItems": "Adicionar itens",
+      "addCustomItem": "Adicionar item personalizado"
+    },
+    "orderEdit": {
+      "requestFailed": "Não foi possível iniciar a edição do pedido: {{message}}",
+      "confirmFailed": "Não foi possível confirmar a edição do pedido: {{message}}"
+    },
+    "variants": {
+      "title": "Variantes de produto",
+      "description": "Escolha as variantes de produto para adicionar ao pedido.",
+      "submit": "Atualizar itens",
+      "notManaged": "Não gerenciado",
+      "available_one": "{{quantity}} disponível",
+      "available_other": "{{quantity}} disponíveis",
+      "availableAtLocations": "{{available}} em {{locations}}",
+      "locations_one": "{{count}} local",
+      "locations_other": "{{count}} locais",
+      "columns": {
+        "product": "Produto",
+        "variant": "Variante",
+        "sku": "SKU",
+        "updated": "Atualizado",
+        "created": "Criado",
+        "stock": "Estoque"
+      },
+      "oldestFirst": "Mais antigos primeiro",
+      "newestFirst": "Mais recentes primeiro"
+    },
+    "customItem": {
+      "title": "Adicionar item personalizado",
+      "description": "Adicione um item personalizado ao pedido. Ele entra como um novo item, sem vínculo com um produto existente.",
+      "titleLabel": "Título",
+      "titleHint": "Informe o título do item",
+      "unitPriceLabel": "Preço unitário",
+      "unitPriceHint": "Informe o preço unitário do item",
+      "quantityLabel": "Quantidade",
+      "quantityHint": "Informe a quantidade do item",
+      "submit": "Adicionar item"
+    },
+    "shipping": {
+      "title": "Envio",
+      "noItems": "Este pedido rascunho ainda não tem itens. Adicione itens ao pedido antes de adicionar o envio.",
+      "editTitle": "Editar envio",
+      "description": "Escolha os métodos de envio dos itens do pedido.",
+      "shippingProfile": "Perfil de envio",
+      "action": "Ação",
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} itens",
+      "quantityBadge_one": "{{quantity}}x item",
+      "quantityBadge_other": "{{quantity}}x itens",
+      "editOption": "Editar opção de envio",
+      "removeOption": "Remover opção de envio",
+      "addOption": "Adicionar opção de envio",
+      "formDescription": "Adicione um método de envio para o perfil de envio selecionado. A prévia abaixo mostra os itens que serão enviados por esse método.",
+      "itemsToShip": "Itens a enviar",
+      "itemsToShipHint": "Itens com o perfil de envio selecionado.",
+      "location": "Local",
+      "locationHint": "Escolha de onde os itens serão enviados.",
+      "locationPlaceholder": "Selecione o local",
+      "chooseLocationAndProfile": "Escolha um local e um perfil de envio primeiro.",
+      "chooseLocation": "Escolha um local primeiro.",
+      "chooseProfile": "Escolha um perfil de envio primeiro.",
+      "shippingOption": "Opção de envio",
+      "shippingOptionHint": "Escolha a opção de envio.",
+      "shippingOptionPlaceholder": "Selecione a opção de envio",
+      "customAmount": "Valor personalizado",
+      "customAmountHint": "Defina um valor personalizado para a opção de envio."
+    },
+    "promotions": {
+      "title": "Editar promoções",
+      "apply": "Aplicar promoções",
+      "applyHint": "Gerencie as promoções aplicadas ao pedido.",
+      "allocation": {
+        "each": "cada",
+        "across": "dividido",
+        "once": "uma vez"
+      }
+    },
+    "transferOwnership": {
+      "title": "Transferir titularidade",
+      "description": "Transfira a titularidade deste pedido rascunho para outro cliente",
+      "currentOwner": "Titular atual",
+      "currentOwnerHint": "O cliente associado a este pedido rascunho no momento.",
+      "newCustomer": "Novo cliente",
+      "newCustomerHint": "O cliente que receberá este pedido rascunho.",
+      "placeholder": "Selecione o cliente",
+      "success": "Cliente atualizado"
+    },
+    "validation": {
+      "required": "Campo obrigatório",
+      "invalidType": "Valor inválido",
+      "requiredText": "Campo obrigatório",
+      "tooShort": "Use pelo menos {{length}} caracteres",
+      "invalidEmail": "E-mail inválido",
+      "invalidValue": "Valor inválido",
+      "invalidOption": "Opção inválida",
+      "invalidInput": "Valor inválido"
+    }
+  }
+}

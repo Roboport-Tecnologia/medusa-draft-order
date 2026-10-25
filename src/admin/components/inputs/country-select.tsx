@@ -2,12 +2,16 @@ import {
   ComponentPropsWithoutRef,
   forwardRef,
   useImperativeHandle,
+  useMemo,
   useRef,
 } from "react"
+import { useTranslation } from "react-i18next"
 
 import { TrianglesMini } from "@medusajs/icons"
 import { clx } from "@medusajs/ui"
+import { useCountryName } from "../../hooks/common/use-country-name"
 import { countries } from "../../lib/data/countries"
+import { toLocaleTag } from "../../lib/utils/locale-utils"
 
 export const CountrySelect = forwardRef<
   HTMLSelectElement,
@@ -21,11 +25,30 @@ export const CountrySelect = forwardRef<
     { className, disabled, placeholder, value, defaultValue, ...props },
     ref
   ) => {
+    const { t, i18n } = useTranslation()
+    const getCountryName = useCountryName()
     const innerRef = useRef<HTMLSelectElement>(null)
 
     useImperativeHandle(ref, () => innerRef.current as HTMLSelectElement)
 
     const isPlaceholder = innerRef.current?.value === ""
+
+    // Translated names are sorted in the admin's language; English keeps
+    // the order of `countries`.
+    const options = useMemo(() => {
+      const named = countries.map((country) => ({
+        iso_2: country.iso_2,
+        name: getCountryName(country.iso_2, country.display_name),
+      }))
+
+      if (i18n.language === "en") {
+        return named
+      }
+
+      const collator = new Intl.Collator(toLocaleTag(i18n.language))
+
+      return named.sort((a, b) => collator.compare(a.name, b.name))
+    }, [getCountryName, i18n.language])
 
     return (
       <div className="relative">
@@ -59,12 +82,12 @@ export const CountrySelect = forwardRef<
         >
           {/* Add an empty option so the first option is preselected */}
           <option value="" disabled className="text-ui-fg-muted">
-            {placeholder || "Select country"}
+            {placeholder || t("draftOrdersPlugin.fields.selectCountry")}
           </option>
-          {countries.map((country) => {
+          {options.map((country) => {
             return (
               <option key={country.iso_2} value={country.iso_2.toLowerCase()}>
-                {country.display_name}
+                {country.name}
               </option>
             )
           })}

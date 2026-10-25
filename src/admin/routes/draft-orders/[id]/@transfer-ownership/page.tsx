@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { HttpTypes } from "@medusajs/types"
 import { Button, Heading, Hint, Label, Select, toast } from "@medusajs/ui"
 import { Control, useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
 import { z } from "zod"
 import { Form } from "../../../../components/common/form"
@@ -13,9 +14,11 @@ import {
   useUpdateDraftOrder,
 } from "../../../../hooks/api/draft-orders"
 import { useComboboxData } from "../../../../hooks/common/use-combobox-data"
+import { useZodErrorMap } from "../../../../hooks/common/use-zod-error-map"
 import { sdk } from "../../../../lib/queries/sdk"
 
 const TransferOwnership = () => {
+  const { t } = useTranslation()
   const { id } = useParams()
 
   const { draft_order, isPending, isError, error } = useDraftOrder(id!, {
@@ -32,11 +35,11 @@ const TransferOwnership = () => {
     <RouteDrawer>
       <RouteDrawer.Header>
         <RouteDrawer.Title asChild>
-          <Heading>Transfer Ownership</Heading>
+          <Heading>{t("draftOrdersPlugin.transferOwnership.title")}</Heading>
         </RouteDrawer.Title>
         <RouteDrawer.Description asChild>
           <span className="sr-only">
-            Transfer the ownership of this draft order to a new customer
+            {t("draftOrdersPlugin.transferOwnership.description")}
           </span>
         </RouteDrawer.Description>
       </RouteDrawer.Header>
@@ -50,11 +53,13 @@ interface TransferOwnershipFormProps {
 }
 
 const TransferOwnershipForm = ({ order }: TransferOwnershipFormProps) => {
+  const { t } = useTranslation()
+  const zodErrorMap = useZodErrorMap()
   const form = useForm<z.infer<typeof schema>>({
     defaultValues: {
       customer_id: order.customer_id || "",
     },
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema, { error: zodErrorMap }),
   })
 
   const { mutateAsync, isPending } = useUpdateDraftOrder(order.id)
@@ -78,7 +83,7 @@ const TransferOwnershipForm = ({ order }: TransferOwnershipFormProps) => {
       { customer_id: data.customer_id },
       {
         onSuccess: () => {
-          toast.success("Customer updated")
+          toast.success(t("draftOrdersPlugin.transferOwnership.success"))
           handleSuccess()
         },
         onError: (error) => {
@@ -102,11 +107,10 @@ const TransferOwnershipForm = ({ order }: TransferOwnershipFormProps) => {
             <div className="flex flex-col space-y-3">
               <div className="flex flex-col">
                 <Label size="small" weight="plus" htmlFor="current-customer">
-                  Current owner
+                  {t("draftOrdersPlugin.transferOwnership.currentOwner")}
                 </Label>
                 <Hint>
-                  The customer that is currently associated with this draft
-                  order.
+                  {t("draftOrdersPlugin.transferOwnership.currentOwnerHint")}
                 </Hint>
               </div>
               <Select disabled value={currentCustomer.value}>
@@ -130,11 +134,11 @@ const TransferOwnershipForm = ({ order }: TransferOwnershipFormProps) => {
           <div className="flex items-center justify-end gap-x-2">
             <RouteDrawer.Close asChild>
               <Button variant="secondary" size="small">
-                Cancel
+                {t("draftOrdersPlugin.general.cancel")}
               </Button>
             </RouteDrawer.Close>
             <Button size="small" type="submit" isLoading={isPending}>
-              Save
+              {t("draftOrdersPlugin.general.save")}
             </Button>
           </div>
         </RouteDrawer.Footer>
@@ -149,6 +153,7 @@ interface CustomerFieldProps {
 }
 
 const CustomerField = ({ control, currentCustomerId }: CustomerFieldProps) => {
+  const { t } = useTranslation()
   const customers = useComboboxData({
     queryFn: async (params) => {
       return await sdk.admin.customer.list({
@@ -178,8 +183,12 @@ const CustomerField = ({ control, currentCustomerId }: CustomerFieldProps) => {
       render={({ field }) => (
         <Form.Item className="space-y-3">
           <div className="flex flex-col">
-            <Form.Label>New customer</Form.Label>
-            <Form.Hint>The customer to transfer this draft order to.</Form.Hint>
+            <Form.Label>
+              {t("draftOrdersPlugin.transferOwnership.newCustomer")}
+            </Form.Label>
+            <Form.Hint>
+              {t("draftOrdersPlugin.transferOwnership.newCustomerHint")}
+            </Form.Hint>
           </div>
           <Form.Control>
             <Combobox
@@ -188,7 +197,7 @@ const CustomerField = ({ control, currentCustomerId }: CustomerFieldProps) => {
               isFetchingNextPage={customers.isFetchingNextPage}
               searchValue={customers.searchValue}
               onSearchValueChange={customers.onSearchValueChange}
-              placeholder="Select customer"
+              placeholder={t("draftOrdersPlugin.transferOwnership.placeholder")}
               {...field}
             />
           </Form.Control>

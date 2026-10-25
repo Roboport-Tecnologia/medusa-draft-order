@@ -22,6 +22,8 @@ import {
 import { keepPreviousData } from "@tanstack/react-query"
 import { matchSorter } from "match-sorter"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import type { TFunction } from "i18next"
+import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
 
 import type { AdminOrderPreviewLineItem } from "../../../../../types/http/orders/entity"
@@ -47,7 +49,10 @@ import {
 } from "../../../../hooks/api/draft-orders"
 import { useOrderPreview } from "../../../../hooks/api/orders"
 import { useProductVariants } from "../../../../hooks/api/product-variants"
+import { useDate } from "../../../../hooks/common/use-date"
 import { useDebouncedSearch } from "../../../../hooks/common/use-debounced-search"
+import { PluralT, usePlural } from "../../../../hooks/common/use-plural"
+import { useZodErrorMap } from "../../../../hooks/common/use-zod-error-map"
 import { useQueryParams } from "../../../../hooks/common/use-query-params"
 import { useCancelOrderEdit } from "../../../../hooks/order-edits/use-cancel-order-edit"
 import { useInitiateOrderEdit } from "../../../../hooks/order-edits/use-initiate-order-edit"
@@ -56,12 +61,12 @@ import {
   getNativeSymbol,
   getStylizedAmount,
 } from "../../../../lib/data/currencies"
-import { getFullDate } from "../../../../lib/utils/date-utils"
 import { convertNumber } from "../../../../lib/utils/number-utils"
 
 const STACKED_MODAL_ID = "items_stacked_modal"
 
 const Items = () => {
+  const { t } = useTranslation()
   const { id } = useParams()
 
   const {
@@ -104,12 +109,10 @@ const Items = () => {
       ) : (
         <div>
           <RouteFocusModal.Title asChild>
-            <span className="sr-only">Edit Items</span>
+            <span className="sr-only">{t("draftOrdersPlugin.items.title")}</span>
           </RouteFocusModal.Title>
           <RouteFocusModal.Description asChild>
-            <span className="sr-only">
-              Loading data for the draft order, please wait...
-            </span>
+            <span className="sr-only">{t("draftOrdersPlugin.general.loading")}</span>
           </RouteFocusModal.Description>
         </div>
       )}
@@ -123,6 +126,8 @@ interface ItemsFormProps {
 }
 
 const ItemsForm = ({ preview, currencyCode }: ItemsFormProps) => {
+  const { t } = useTranslation()
+  const tp = usePlural()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [modalContent, setModalContent] = useState<StackedModalContent | null>(
     null
@@ -150,7 +155,9 @@ const ItemsForm = ({ preview, currencyCode }: ItemsFormProps) => {
 
     await requestOrderEdit(undefined, {
       onError: (e) => {
-        toast.error(`Failed to request order edit: ${e.message}`)
+        toast.error(
+          t("draftOrdersPlugin.orderEdit.requestFailed", { message: e.message })
+        )
       },
       onSuccess: () => {
         requestSucceeded = true
@@ -164,7 +171,9 @@ const ItemsForm = ({ preview, currencyCode }: ItemsFormProps) => {
 
     await confirmOrderEdit(undefined, {
       onError: (e) => {
-        toast.error(`Failed to confirm order edit: ${e.message}`)
+        toast.error(
+          t("draftOrdersPlugin.orderEdit.confirmFailed", { message: e.message })
+        )
       },
       onSuccess: () => {
         handleSuccess()
@@ -213,11 +222,11 @@ const ItemsForm = ({ preview, currencyCode }: ItemsFormProps) => {
             <div className="flex w-full max-w-[720px] flex-col gap-y-6 px-6 py-16">
               <div>
                 <RouteFocusModal.Title asChild>
-                  <Heading>Edit Items</Heading>
+                  <Heading>{t("draftOrdersPlugin.items.title")}</Heading>
                 </RouteFocusModal.Title>
                 <RouteFocusModal.Description asChild>
                   <Text size="small" className="text-ui-fg-subtle">
-                    Edit the items in the draft order
+                    {t("draftOrdersPlugin.items.description")}
                   </Text>
                 </RouteFocusModal.Description>
               </div>
@@ -226,17 +235,17 @@ const ItemsForm = ({ preview, currencyCode }: ItemsFormProps) => {
                 <div className="grid grid-cols-2 items-center gap-3">
                   <div className="flex flex-col">
                     <Text size="small" weight="plus" leading="compact">
-                      Items
+                      {t("draftOrdersPlugin.items.itemsLabel")}
                     </Text>
                     <Text size="small" className="text-ui-fg-subtle">
-                      Choose items from the product catalog.
+                      {t("draftOrdersPlugin.items.itemsHint")}
                     </Text>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex-1">
                       <Input
                         type="search"
-                        placeholder="Search items"
+                        placeholder={t("draftOrdersPlugin.items.searchPlaceholder")}
                         value={searchValue}
                         onChange={(e) => onSearchValueChange(e.target.value)}
                       />
@@ -265,17 +274,17 @@ const ItemsForm = ({ preview, currencyCode }: ItemsFormProps) => {
                     <div className="text-ui-fg-muted grid grid-cols-[2fr_1fr_2fr_28px] gap-3 px-4 py-2">
                       <div>
                         <Text size="small" weight="plus">
-                          Item
+                          {t("draftOrdersPlugin.items.columns.item")}
                         </Text>
                       </div>
                       <div>
                         <Text size="small" weight="plus">
-                          Quantity
+                          {t("draftOrdersPlugin.items.columns.quantity")}
                         </Text>
                       </div>
                       <div className="text-right">
                         <Text size="small" weight="plus">
-                          Price
+                          {t("draftOrdersPlugin.items.columns.price")}
                         </Text>
                       </div>
                       <div />
@@ -285,10 +294,10 @@ const ItemsForm = ({ preview, currencyCode }: ItemsFormProps) => {
                     {itemCount <= 0 ? (
                       <div className="bg-ui-bg-base shadow-elevation-card-rest flex flex-col items-center justify-center gap-1 gap-x-3 rounded-lg p-4">
                         <Text size="small" weight="plus" leading="compact">
-                          There are no items in this order
+                          {t("draftOrdersPlugin.items.empty.title")}
                         </Text>
                         <Text size="small" className="text-ui-fg-subtle">
-                          Add items to the order to get started.
+                          {t("draftOrdersPlugin.items.empty.description")}
                         </Text>
                       </div>
                     ) : matches.length > 0 ? (
@@ -303,10 +312,12 @@ const ItemsForm = ({ preview, currencyCode }: ItemsFormProps) => {
                     ) : (
                       <div className="bg-ui-bg-base shadow-elevation-card-rest flex flex-col items-center justify-center gap-1 gap-x-3 rounded-lg p-4">
                         <Text size="small" weight="plus" leading="compact">
-                          No items found
+                          {t("draftOrdersPlugin.items.noResults.title")}
                         </Text>
                         <Text size="small" className="text-ui-fg-subtle">
-                          No items found for "{query}".
+                          {t("draftOrdersPlugin.items.noResults.description", {
+                            query,
+                          })}
                         </Text>
                       </div>
                     )}
@@ -317,7 +328,7 @@ const ItemsForm = ({ preview, currencyCode }: ItemsFormProps) => {
               <div className="grid grid-cols-[1fr_0.5fr_0.5fr] gap-3">
                 <div>
                   <Text size="small" weight="plus" leading="compact">
-                    Subtotal
+                    {t("draftOrdersPlugin.summary.subtotal")}
                   </Text>
                 </div>
                 <div>
@@ -326,7 +337,7 @@ const ItemsForm = ({ preview, currencyCode }: ItemsFormProps) => {
                     leading="compact"
                     className="text-ui-fg-subtle"
                   >
-                    {itemCount} {itemCount === 1 ? "item" : "items"}
+                    {tp("draftOrdersPlugin.summary.itemCount", itemCount)}
                   </Text>
                 </div>
                 <div className="text-right">
@@ -352,7 +363,7 @@ const ItemsForm = ({ preview, currencyCode }: ItemsFormProps) => {
         <div className="flex items-center justify-end gap-x-2">
           <RouteFocusModal.Close asChild>
             <Button size="small" variant="secondary" type="button">
-              Cancel
+              {t("draftOrdersPlugin.general.cancel")}
             </Button>
           </RouteFocusModal.Close>
           <Button
@@ -361,7 +372,7 @@ const ItemsForm = ({ preview, currencyCode }: ItemsFormProps) => {
             onClick={onSubmit}
             isLoading={isSubmitting}
           >
-            Save
+            {t("draftOrdersPlugin.general.save")}
           </Button>
         </div>
       </RouteFocusModal.Footer>
@@ -389,13 +400,14 @@ const Item = ({ item, preview, currencyCode }: ItemProps) => {
 
 const VariantItem = ({ item, preview, currencyCode }: ItemProps) => {
   const [editing, setEditing] = useState(false)
+  const zodErrorMap = useZodErrorMap()
 
   const form = useForm<z.infer<typeof variantItemSchema>>({
     defaultValues: {
       quantity: item.quantity,
       unit_price: item.unit_price,
     },
-    resolver: zodResolver(variantItemSchema),
+    resolver: zodResolver(variantItemSchema, { error: zodErrorMap }),
   })
 
   const actionId = useMemo(() => {
@@ -586,6 +598,7 @@ const variantItemSchema = z.object({
 
 const CustomItem = ({ item, preview, currencyCode }: ItemProps) => {
   const [editing, setEditing] = useState(false)
+  const zodErrorMap = useZodErrorMap()
   const { quantity, unit_price, title } = item
 
   const form = useForm<z.infer<typeof customItemSchema>>({
@@ -594,7 +607,7 @@ const CustomItem = ({ item, preview, currencyCode }: ItemProps) => {
       quantity,
       unit_price,
     },
-    resolver: zodResolver(customItemSchema),
+    resolver: zodResolver(customItemSchema, { error: zodErrorMap }),
   })
 
   useEffect(() => {
@@ -794,6 +807,7 @@ const StackedModalTrigger = ({
   type,
   setModalContent,
 }: StackedModalTriggerProps) => {
+  const { t } = useTranslation()
   const { setIsOpen } = useStackedModal()
 
   const onClick = useCallback(() => {
@@ -805,8 +819,8 @@ const StackedModalTrigger = ({
     <StackedFocusModal.Trigger asChild>
       <DropdownMenu.Item onClick={onClick}>
         {type === StackedModalContent.ADD_ITEMS
-          ? "Add items"
-          : "Add custom item"}
+          ? t("draftOrdersPlugin.items.addItems")
+          : t("draftOrdersPlugin.items.addCustomItem")}
       </DropdownMenu.Item>
     </StackedFocusModal.Trigger>
   )
@@ -821,6 +835,7 @@ interface ExistingItemsFormProps {
 }
 
 const ExistingItemsForm = ({ orderId, items }: ExistingItemsFormProps) => {
+  const { t } = useTranslation()
   const { setIsOpen } = useStackedModal()
   const [rowSelection, setRowSelection] = useState<DataTableRowSelectionState>(
     items.reduce((acc, item) => {
@@ -908,11 +923,11 @@ const ExistingItemsForm = ({ orderId, items }: ExistingItemsFormProps) => {
     >
       <StackedFocusModal.Header>
         <StackedFocusModal.Title asChild>
-          <span className="sr-only">Product Variants</span>
+          <span className="sr-only">{t("draftOrdersPlugin.variants.title")}</span>
         </StackedFocusModal.Title>
         <StackedFocusModal.Description asChild>
           <span className="sr-only">
-            Choose product variants to add to the order.
+            {t("draftOrdersPlugin.variants.description")}
           </span>
         </StackedFocusModal.Description>
       </StackedFocusModal.Header>
@@ -939,11 +954,11 @@ const ExistingItemsForm = ({ orderId, items }: ExistingItemsFormProps) => {
         <div className="flex items-center justify-end gap-x-2">
           <StackedFocusModal.Close asChild>
             <Button size="small" variant="secondary" type="button">
-              Cancel
+              {t("draftOrdersPlugin.general.cancel")}
             </Button>
           </StackedFocusModal.Close>
           <Button size="small" type="button" onClick={onSubmit}>
-            Update items
+            {t("draftOrdersPlugin.variants.submit")}
           </Button>
         </div>
       </StackedFocusModal.Footer>
@@ -954,9 +969,17 @@ const ExistingItemsForm = ({ orderId, items }: ExistingItemsFormProps) => {
 const columnHelper =
   createDataTableColumnHelper<HttpTypes.AdminProductVariant>()
 
-const getVariantInventory = (variant: HttpTypes.AdminProductVariant) => {
+const getVariantInventory = (
+  variant: HttpTypes.AdminProductVariant,
+  t: TFunction,
+  tp: PluralT
+) => {
   if (!variant.manage_inventory) {
-    return { text: "Not managed", hasInventoryKit: false, notManaged: true }
+    return {
+      text: t("draftOrdersPlugin.variants.notManaged"),
+      hasInventoryKit: false,
+      notManaged: true,
+    }
   }
 
   const quantity = variant.inventory_quantity
@@ -975,21 +998,30 @@ const getVariantInventory = (variant: HttpTypes.AdminProductVariant) => {
   })
   const locationCount = Object.keys(locations).length
 
+  const available = tp("draftOrdersPlugin.variants.available", quantity ?? 0, {
+    quantity,
+  })
+
   const text = hasInventoryKit
-    ? `${quantity} available`
-    : `${quantity} available at ${locationCount} location${
-        locationCount === 1 ? "" : "s"
-      }`
+    ? available
+    : t("draftOrdersPlugin.variants.availableAtLocations", {
+        available,
+        locations: tp("draftOrdersPlugin.variants.locations", locationCount),
+      })
 
   return { text, hasInventoryKit, quantity, notManaged: false }
 }
 
 const useColumns = () => {
+  const { t } = useTranslation()
+  const tp = usePlural()
+  const { getFullDate } = useDate()
+
   return useMemo(() => {
     return [
       columnHelper.select(),
       columnHelper.accessor("product.title", {
-        header: "Product",
+        header: t("draftOrdersPlugin.variants.columns.product"),
         cell: ({ row }) => {
           return (
             <div className="flex items-center gap-x-2">
@@ -1004,18 +1036,18 @@ const useColumns = () => {
         enableSorting: true,
       }),
       columnHelper.accessor("title", {
-        header: "Variant",
+        header: t("draftOrdersPlugin.variants.columns.variant"),
         enableSorting: true,
       }),
       columnHelper.accessor("sku", {
-        header: "SKU",
+        header: t("draftOrdersPlugin.variants.columns.sku"),
         cell: ({ getValue }) => {
           return getValue() ?? "-"
         },
         enableSorting: true,
       }),
       columnHelper.accessor("updated_at", {
-        header: "Updated",
+        header: t("draftOrdersPlugin.variants.columns.updated"),
         cell: ({ getValue }) => {
           return (
             <Tooltip
@@ -1026,11 +1058,11 @@ const useColumns = () => {
           )
         },
         enableSorting: true,
-        sortAscLabel: "Oldest first",
-        sortDescLabel: "Newest first",
+        sortAscLabel: t("draftOrdersPlugin.variants.oldestFirst"),
+        sortDescLabel: t("draftOrdersPlugin.variants.newestFirst"),
       }),
       columnHelper.accessor("created_at", {
-        header: "Created",
+        header: t("draftOrdersPlugin.variants.columns.created"),
         cell: ({ getValue }) => {
           return (
             <Tooltip
@@ -1041,15 +1073,15 @@ const useColumns = () => {
           )
         },
         enableSorting: true,
-        sortAscLabel: "Oldest first",
-        sortDescLabel: "Newest first",
+        sortAscLabel: t("draftOrdersPlugin.variants.oldestFirst"),
+        sortDescLabel: t("draftOrdersPlugin.variants.newestFirst"),
       }),
       columnHelper.display({
         id: "inventory",
-        header: "Stock",
+        header: t("draftOrdersPlugin.variants.columns.stock"),
         cell: ({ row }) => {
           const { text, hasInventoryKit, quantity, notManaged } =
-            getVariantInventory(row.original)
+            getVariantInventory(row.original, t, tp)
 
           return (
             <Tooltip content={text}>
@@ -1068,7 +1100,7 @@ const useColumns = () => {
         },
       }),
     ]
-  }, [])
+  }, [t, tp, getFullDate])
 }
 
 interface CustomItemFormProps {
@@ -1077,6 +1109,8 @@ interface CustomItemFormProps {
 }
 
 const CustomItemForm = ({ orderId, currencyCode }: CustomItemFormProps) => {
+  const { t } = useTranslation()
+  const zodErrorMap = useZodErrorMap()
   const { setIsOpen } = useStackedModal()
   const { mutateAsync: addItems } = useDraftOrderAddItems(orderId)
 
@@ -1086,7 +1120,7 @@ const CustomItemForm = ({ orderId, currencyCode }: CustomItemFormProps) => {
       quantity: 1,
       unit_price: "",
     },
-    resolver: zodResolver(customItemSchema),
+    resolver: zodResolver(customItemSchema, { error: zodErrorMap }),
   })
 
   const onSubmit = form.handleSubmit(async (data) => {
@@ -1121,12 +1155,11 @@ const CustomItemForm = ({ orderId, currencyCode }: CustomItemFormProps) => {
               <div className="flex w-full max-w-[720px] flex-col gap-y-6 px-2 py-16">
                 <div>
                   <StackedFocusModal.Title asChild>
-                    <Heading>Add custom item</Heading>
+                    <Heading>{t("draftOrdersPlugin.customItem.title")}</Heading>
                   </StackedFocusModal.Title>
                   <StackedFocusModal.Description asChild>
                     <Text size="small" className="text-ui-fg-subtle">
-                      Add a custom item to the order. This will add a new line
-                      item that is not associated with an existing product.
+                      {t("draftOrdersPlugin.customItem.description")}
                     </Text>
                   </StackedFocusModal.Description>
                 </div>
@@ -1138,8 +1171,12 @@ const CustomItemForm = ({ orderId, currencyCode }: CustomItemFormProps) => {
                     <Form.Item>
                       <div className="grid grid-cols-2 gap-x-3">
                         <div>
-                          <Form.Label>Title</Form.Label>
-                          <Form.Hint>Enter the title of the item</Form.Hint>
+                          <Form.Label>
+                            {t("draftOrdersPlugin.customItem.titleLabel")}
+                          </Form.Label>
+                          <Form.Hint>
+                            {t("draftOrdersPlugin.customItem.titleHint")}
+                          </Form.Hint>
                         </div>
                         <div>
                           <Form.Control>
@@ -1159,9 +1196,11 @@ const CustomItemForm = ({ orderId, currencyCode }: CustomItemFormProps) => {
                     <Form.Item>
                       <div className="grid grid-cols-2 gap-x-3">
                         <div>
-                          <Form.Label>Unit price</Form.Label>
+                          <Form.Label>
+                            {t("draftOrdersPlugin.customItem.unitPriceLabel")}
+                          </Form.Label>
                           <Form.Hint>
-                            Enter the unit price of the item
+                            {t("draftOrdersPlugin.customItem.unitPriceHint")}
                           </Form.Hint>
                         </div>
                         <div>
@@ -1189,8 +1228,12 @@ const CustomItemForm = ({ orderId, currencyCode }: CustomItemFormProps) => {
                     <Form.Item>
                       <div className="grid grid-cols-2 gap-x-3">
                         <div>
-                          <Form.Label>Quantity</Form.Label>
-                          <Form.Hint>Enter the quantity of the item</Form.Hint>
+                          <Form.Label>
+                            {t("draftOrdersPlugin.customItem.quantityLabel")}
+                          </Form.Label>
+                          <Form.Hint>
+                            {t("draftOrdersPlugin.customItem.quantityHint")}
+                          </Form.Hint>
                         </div>
                         <div className="w-full flex-1">
                           <Form.Control>
@@ -1211,11 +1254,11 @@ const CustomItemForm = ({ orderId, currencyCode }: CustomItemFormProps) => {
             <div className="flex items-center justify-end gap-x-2">
               <StackedFocusModal.Close asChild>
                 <Button size="small" variant="secondary" type="button">
-                  Cancel
+                  {t("draftOrdersPlugin.general.cancel")}
                 </Button>
               </StackedFocusModal.Close>
               <Button size="small" type="button" onClick={onSubmit}>
-                Add item
+                {t("draftOrdersPlugin.customItem.submit")}
               </Button>
             </div>
           </StackedFocusModal.Footer>

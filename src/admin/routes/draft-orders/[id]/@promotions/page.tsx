@@ -11,7 +11,9 @@ import {
   Text,
   toast,
 } from "@medusajs/ui"
+import type { TFunction } from "i18next"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
 import { KeyboundForm } from "../../../../components/common/keybound-form"
 import { Combobox } from "../../../../components/inputs/combobox"
@@ -33,6 +35,7 @@ import { getLocaleAmount } from "../../../../lib/data/currencies"
 import { sdk } from "../../../../lib/queries/sdk"
 
 const Promotions = () => {
+  const { t } = useTranslation()
   const { id } = useParams()
 
   const {
@@ -55,7 +58,7 @@ const Promotions = () => {
     <RouteDrawer onClose={onCancel}>
       <RouteDrawer.Header>
         <RouteDrawer.Title asChild>
-          <Heading>Edit Promotions</Heading>
+          <Heading>{t("draftOrdersPlugin.promotions.title")}</Heading>
         </RouteDrawer.Title>
       </RouteDrawer.Header>
       {isReady && <PromotionForm preview={preview} />}
@@ -68,6 +71,7 @@ interface PromotionFormProps {
 }
 
 const PromotionForm = ({ preview }: PromotionFormProps) => {
+  const { t } = useTranslation()
   const { items, shipping_methods } = preview
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -176,10 +180,10 @@ const PromotionForm = ({ preview }: PromotionFormProps) => {
           <div className="flex flex-col gap-3">
             <div className="flex flex-col">
               <Label size="small" weight="plus" htmlFor="promotion-combobox">
-                Apply promotions
+                {t("draftOrdersPlugin.promotions.apply")}
               </Label>
               <Hint id="promotion-combobox-hint">
-                Manage promotions that should be applied to the order.
+                {t("draftOrdersPlugin.promotions.applyHint")}
               </Hint>
             </div>
             <Combobox
@@ -212,7 +216,7 @@ const PromotionForm = ({ preview }: PromotionFormProps) => {
         <div className="flex justify-end gap-2">
           <RouteDrawer.Close asChild>
             <Button size="small" variant="secondary">
-              Cancel
+              {t("draftOrdersPlugin.general.cancel")}
             </Button>
           </RouteDrawer.Close>
           <Button
@@ -220,7 +224,7 @@ const PromotionForm = ({ preview }: PromotionFormProps) => {
             type="submit"
             isLoading={isSubmitting || isAddingPromotions}
           >
-            Save
+            {t("draftOrdersPlugin.general.save")}
           </Button>
         </div>
       </RouteDrawer.Footer>
@@ -239,6 +243,7 @@ const PromotionItem = ({
   orderId,
   isLoading,
 }: PromotionItemProps) => {
+  const { t } = useTranslation()
   const { mutateAsync: removePromotions, isPending } =
     useDraftOrderRemovePromotions(orderId)
 
@@ -283,7 +288,7 @@ const PromotionItem = ({
             </div>
           )}
           <Text size="small" leading="compact" className="capitalize">
-            {promotion.application_method?.allocation!}
+            {getAllocationLabel(promotion.application_method?.allocation, t)}
           </Text>
         </div>
       </div>
@@ -298,6 +303,22 @@ const PromotionItem = ({
       </IconButton>
     </div>
   )
+}
+
+const ALLOCATION_KEYS: Record<string, string> = {
+  each: "draftOrdersPlugin.promotions.allocation.each",
+  across: "draftOrdersPlugin.promotions.allocation.across",
+  once: "draftOrdersPlugin.promotions.allocation.once",
+}
+
+function getAllocationLabel(allocation: string | undefined, t: TFunction) {
+  if (!allocation) {
+    return allocation
+  }
+
+  const key = ALLOCATION_KEYS[allocation]
+
+  return key ? t(key) : allocation
 }
 
 function getDisplayValue(promotion: HttpTypes.AdminPromotion) {
