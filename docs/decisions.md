@@ -7,7 +7,7 @@
 ## Package name and version
 
 - The name stays `@medusajs/draft-order`. `defineConfig` (`@medusajs/utils`) always adds `{ resolve: "@medusajs/draft-order" }` to the plugins, and `@medusajs/medusa` depends on `"@medusajs/draft-order": "2.21.1"`. Under another name, the app would load both the fork and upstream, with two sets of routes for `/draft-orders`.
-- Apps install it from GitHub (`#dist`) or yalc and replace the transitive copy with an npm override (`"$@medusajs/draft-order"`). See the README for npm workspaces, where the override needs a root dependency.
+- Apps install it from GitHub (a pinned `dist` commit, never the branch) or yalc and replace the transitive copy with an npm override (`"$@medusajs/draft-order"`). See the README for npm workspaces, where the override needs a root dependency.
 - The version is `2.21.1-roboport.1`. npm accepts a prerelease version under an override (tested with tarball, `file:` and workspace installs), and nothing in Medusa reads the plugin's version. Because `2.21.1-roboport.1` doesn't satisfy `@medusajs/medusa`'s `"2.21.1"`, the override is mandatory, and `npm ls` fails when it isn't applied. With the plain upstream version, npm would sometimes dedupe to the fork by luck and sometimes install upstream next to it, and `npm ls` would show two `2.21.1` copies that look the same.
 
 ## Build and dependencies

@@ -16,7 +16,7 @@ The package keeps the name `@medusajs/draft-order`. Medusa's `defineConfig` alwa
 ```json
 {
   "dependencies": {
-    "@medusajs/draft-order": "github:Roboport-Tecnologia/medusa-draft-order#dist"
+    "@medusajs/draft-order": "github:Roboport-Tecnologia/medusa-draft-order#<dist commit sha>"
   },
   "overrides": {
     "@medusajs/draft-order": "$@medusajs/draft-order"
@@ -69,7 +69,7 @@ npm run lint
 npm run dev          # rebuilds and pushes to apps linked with yalc
 ```
 
-Release: commit, then `npm run release:github`. It builds and pushes `.medusa/server`, `README.md`, `LICENSE` and a `package.json` without scripts or devDependencies to the `dist` branch, and apps pick it up with `npm update @medusajs/draft-order`.
+Release: commit, then `npm run release:github`. It builds and pushes `.medusa/server`, `README.md`, `LICENSE` and a `package.json` without scripts or devDependencies to the `dist` branch and prints the build commit's SHA; apps pin that SHA (never the branch) and run `npm install`.
 
 ## Moving to a new Medusa version
 
@@ -77,6 +77,6 @@ Release: commit, then `npm run release:github`. It builds and pushes `.medusa/se
 2. Apply them here. Run new or changed strings through `t()`: add the keys to `en.json` with upstream's wording, then to `ptBR.json`.
 3. Set `version` to `<new version>-roboport.1` and move the `@medusajs/*` pins, and the other dependencies, to the versions the new `@medusajs/medusa` resolves (`node_modules/@medusajs/draft-order` in an app's `package-lock.json`).
 4. `npm install`, `npm run build`, `npm run check:i18n`, `npm run lint`. Compare `.medusa/server` with the upstream package's (`npm pack @medusajs/draft-order@<version>`): the same files, with the admin bundle differing only in the strings.
-5. Commit, release, and upgrade the apps' Medusa packages together with `npm update @medusajs/draft-order`.
+5. Commit, release, and upgrade the apps' Medusa packages together with pinning the new build commit's SHA.
 
 Decisions are recorded in `docs/decisions.md`.
